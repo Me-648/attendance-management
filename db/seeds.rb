@@ -39,9 +39,9 @@ puts '  -> admin@example.com (パスワード: password) 作成完了'
 # 月曜(1)から金曜(5)までのコマを定義
 puts '2. 時間割（Periods）データを作成中...'
 PERIOD_TIMES = [
-  { period_number: 1, start_time: '09:00:00' },
-  { period_number: 2, start_time: '10:40:00' },
-  { period_number: 3, start_time: '13:00:00' }
+  { period_number: 1, start_time: '09:30:00' },
+  { period_number: 2, start_time: '11:20:00' },
+  { period_number: 3, start_time: '13:45:00' }
 ]
 
 (1..5).each do |weekday| # 1:月曜 〜 5:金曜
