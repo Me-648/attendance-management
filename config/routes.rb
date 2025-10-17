@@ -12,4 +12,18 @@ Rails.application.routes.draw do
 
   # Defines the root path route ("/")
   # root "posts#index"
+
+  # 管理者専用のルート
+  namespace :admin do
+    root 'user#index'
+    resources :users, only: [:index, :show]
+  end
+
+  # 学生用のルート(ログイン後画面)
+  resources: student do
+    root 'attendances#index', as: 'student_root'
+  end
+
+  # ログイン前のルート
+  root 'static_pages#home'  # 仮のトップページ
 end
