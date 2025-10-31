@@ -19,6 +19,10 @@ class User < ApplicationRecord
 
 
   # ヘルパーメソッド
+  def is_admin?
+    self.role == 1
+  end
+
   def is_student?
     self.role == 0
   end
