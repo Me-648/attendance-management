@@ -1,7 +1,6 @@
 # config/routes.rb
 
 Rails.application.routes.draw do
-  get "static_pages/home"
   devise_for :users
   
   # Reveal health status on /up ...
@@ -26,13 +25,8 @@ Rails.application.routes.draw do
   resource :student, only: [] do 
      # /student にアクセスしたら attendances#index へ
      root 'attendances#index', as: 'root'
-  end
 
-  # =======================================================
-  # ログイン前のルート
-  # =======================================================
-  devise_scope :user do
-    # Deviseの :user マッピングのスコープ内で root を定義
-    root 'devise/sessions#new', as: :authenticated_root
+    # 出欠を登録するためのルート /student/attendances
+    resources :attendances, only: [:create]
   end
 end

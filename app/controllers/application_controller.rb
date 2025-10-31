@@ -1,5 +1,6 @@
 class ApplicationController < ActionController::Base
   # ほとんどのコントローラーで認証を要求
+  # ログインしていない場合はログインページにリダイレクトされる
   before_action :authenticate_user!
 
   # Only allow modern browsers supporting webp images, web push, badges, import maps, CSS nesting, and CSS :has.
@@ -7,7 +8,7 @@ class ApplicationController < ActionController::Base
 
   # Deviseの認証後に呼ばれるメソッド
   def after_sign_in_path_for(resource)
-    if resouce.is_admin?
+    if resource.is_admin?
       # 管理者ログインの成功パス
       admin_root_path
     else

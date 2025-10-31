@@ -5,7 +5,8 @@ class Attendance < ApplicationRecord
 
   enum :status, { attended: 0, absent: 1 }
 
-  validates :user_id, uniqueness: { scope: :period_id }
+  # 1人のユーザーは、同じ日に同じ時限の記録を1つしか持てない
+  validates :user_id, uniqueness: { scope: [:period_id, :date] }
   validate :time_to_attend, if: :attended?
 
   private
