@@ -86,29 +86,28 @@ mon_1st_period = Period.find_by!(weekday: 1, period_number: 1)
 fri_2nd_period = Period.find_by!(weekday: 5, period_number: 2)
 
 # 田中太郎の過去の出欠を作成
-Attendance.create!(
-  user: student_a,
-  period: mon_1st_period,
-  date: Date.today.ago(7.days), # 1週間前の月曜日
-  attendance_status: :attended,
-  reason: nil
+attendance1 = Attendance.new(user: student_a, period: mon_1st_period, date: Date.today.ago(7.days), status: :attended)
+attendance1.save(validate: false)
+
+attendance2 = Attendance.new(
+  user: student_a, 
+  period: fri_2nd_period, 
+  date: Date.today.ago(3.days), 
+  status: :absent, 
+  reason: '体調不良のため'
 )
-Attendance.create!(
-  user: student_a,
-  period: fri_2nd_period,
-  date: Date.today.ago(3.days), # 過去の金曜日
-  attendance_status: :absent,
-  reason: '体調不良のため' # 欠席理由記入欄(ID:7)のテスト用
-)
+attendance2.save(validate: false)
+
 
 # 佐藤花子の過去の出欠を作成
-Attendance.create!(
-  user: student_b,
-  period: mon_1st_period,
-  date: Date.today.ago(7.days),
-  attendance_status: :absent,
+attendance3 = Attendance.new(
+  user: student_b, 
+  period: mon_1st_period, 
+  date: Date.today.ago(7.days), 
+  status: :absent, 
   reason: '親族の法事'
 )
+attendance3.save(validate: false)
 
 puts "  -> サンプル出欠実績 #{Attendance.count}件作成完了"
 puts '=================================================='
