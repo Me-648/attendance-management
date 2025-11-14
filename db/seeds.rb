@@ -15,12 +15,6 @@ Period.destroy_all
 User.destroy_all
 puts '削除完了'
 
-# --- 権限とステータスの定義（定数） ---
-ADMIN_ROLE = 1
-STUDENT_ROLE = 0
-ATTENDANCE_STATUS = 0 # 出席
-ABSENCE_STATUS = 1  # 欠席
-
 # --- 1. 管理者アカウントの作成 ---
 puts '1. 管理者アカウントを作成中...'
 User.create!(
@@ -28,7 +22,7 @@ User.create!(
   password: 'password',
   password_confirmation: 'password',
   name: 'システム管理者',
-  role: ADMIN_ROLE,
+  role: :admin,
   # 管理者のため、student_idとenrollment_yearはnil (NULL)
   student_id: nil,
   enrollment_year: nil 
@@ -69,7 +63,7 @@ student_a = User.create!(
   password: 'password',
   password_confirmation: 'password',
   name: '田中太郎 (2025)',
-  role: STUDENT_ROLE,
+  role: :student,
   student_id: 'A1000001',
   enrollment_year: 2025 
 )
@@ -78,7 +72,7 @@ student_b = User.create!(
   password: 'password',
   password_confirmation: 'password',
   name: '佐藤花子 (2024)',
-  role: STUDENT_ROLE,
+  role: :student,
   student_id: 'B2000002',
   enrollment_year: 2024
 )
@@ -92,29 +86,28 @@ mon_1st_period = Period.find_by!(weekday: 1, period_number: 1)
 fri_2nd_period = Period.find_by!(weekday: 5, period_number: 2)
 
 # 田中太郎の過去の出欠を作成
-Attendance.create!(
-  user: student_a,
-  period: mon_1st_period,
-  date: Date.today.ago(7.days), # 1週間前の月曜日
-  status: ATTENDANCE_STATUS,
-  reason: nil
+attendance1 = Attendance.new(user: student_a, period: mon_1st_period, date: Date.today.ago(7.days), status: :attended)
+attendance1.save(validate: false)
+
+attendance2 = Attendance.new(
+  user: student_a, 
+  period: fri_2nd_period, 
+  date: Date.today.ago(3.days), 
+  status: :absent, 
+  reason: '体調不良のため'
 )
-Attendance.create!(
-  user: student_a,
-  period: fri_2nd_period,
-  date: Date.today.ago(3.days), # 過去の金曜日
-  status: ABSENCE_STATUS,
-  reason: '体調不良のため' # 欠席理由記入欄(ID:7)のテスト用
-)
+attendance2.save(validate: false)
+
 
 # 佐藤花子の過去の出欠を作成
-Attendance.create!(
-  user: student_b,
-  period: mon_1st_period,
-  date: Date.today.ago(7.days),
-  status: ABSENCE_STATUS,
+attendance3 = Attendance.new(
+  user: student_b, 
+  period: mon_1st_period, 
+  date: Date.today.ago(7.days), 
+  status: :absent, 
   reason: '親族の法事'
 )
+attendance3.save(validate: false)
 
 puts "  -> サンプル出欠実績 #{Attendance.count}件作成完了"
 puts '=================================================='
