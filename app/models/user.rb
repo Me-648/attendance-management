@@ -17,20 +17,7 @@ class User < ApplicationRecord
   # roleカラムにenumを定義
   # 0: student, 1: admin
   # デフォルトは student
-  enum role: { student: 0, admin: 1 }, _default: :student
-
-  # ヘルパーメソッド
-  def is_admin?
-    self.role == 1
-  end
-
-  def is_student?
-    self.role == 0
-  end
-
-  private
-
-  def set_default_role
-    self.role ||= 0
-  end
+  # Rails 7.1+ の構文。`student?` や `admin?` といったヘルパーメソッドが自動で定義されます。
+  # `default: :student` により、新規作成時に自動で `student` が設定されます。
+  enum :role, { student: 0, admin: 1 }, default: :student
 end
