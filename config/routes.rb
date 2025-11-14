@@ -1,16 +1,39 @@
-Rails.application.routes.draw do
-  devise_for :users
-  # Define your application routes per the DSL in https://guides.rubyonrails.org/routing.html
+# config/routes.rb
 
-  # Reveal health status on /up that returns 200 if the app boots with no exceptions, otherwise 500.
-  # Can be used by load balancers and uptime monitors to verify that the app is live.
+Rails.application.routes.draw do
+  get "static_pages/home"
+  devise_for :users
+  
+  # Reveal health status on /up ...
   get "up" => "rails/health#show", as: :rails_health_check
   get "health" => "rails/health#show", as: :rails_health_check
 
-  # Render dynamic PWA files from app/views/pwa/* (remember to link manifest in application.html.erb)
-  # get "manifest" => "rails/pwa#manifest", as: :pwa_manifest
-  # get "service-worker" => "rails/pwa#service_worker", as: :pwa_service_worker
+  # =======================================================
+  # 管理者専用のルート (ID: 6)
+  # =======================================================
+  namespace :admin do
+    # /admin/ にアクセスしたら admin/users#index へ
+    root 'users#index', as: 'root' 
+    
+    # /admin/users へのルートを作成
+    resources :users, only: [:index, :show]
+  end
 
-  # Defines the root path route ("/")
-  # root "posts#index"
+  # =======================================================
+  # 学生用のルート (ログイン後画面) (ID: 5)
+  # =======================================================
+  # resource :student は /student のルートを作成します
+  # [重要] 'resources:' から 'resource :' に修正し、コロンとスペースも修正
+  resource :student, only: [] do 
+     # /student にアクセスしたら attendances#index へ
+     root 'attendances#index', as: 'root'
+  end
+
+  # =======================================================
+  # ログイン前のルート
+  # =======================================================
+  devise_scope :user do
+    # Deviseの :user マッピングのスコープ内で root を定義
+    root 'devise/sessions#new', as: :authenticated_root
+  end
 end

@@ -19,6 +19,18 @@ class User < ApplicationRecord
   # デフォルトは student
   enum role: { student: 0, admin: 1 }, _default: :student
 
-  # is_student? メソッドは enum が自動で生成する student? に置き換えられます。
-  # after_initialize と set_default_role メソッドは enum の _default オプションで不要になります。
+  # ヘルパーメソッド
+  def is_admin?
+    self.role == 1
+  end
+
+  def is_student?
+    self.role == 0
+  end
+
+  private
+
+  def set_default_role
+    self.role ||= 0
+  end
 end
