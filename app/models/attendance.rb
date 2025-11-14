@@ -16,8 +16,8 @@ class Attendance < ApplicationRecord
   private
 
   def time_to_attend
-    # 関連する授業(period)とその開始時刻(start_time)が存在するかを確認
     return if period&.start_time.blank?
+
 
     reception_start_time = period.start_time - 5.minutes
     reception_end_time = period.start_time
