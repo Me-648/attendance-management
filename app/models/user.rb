@@ -20,4 +20,8 @@ class User < ApplicationRecord
   # Rails 7.1+ の構文。`student?` や `admin?` といったヘルパーメソッドが自動で定義されます。
   # `default: :student` により、新規作成時に自動で `student` が設定されます。
   enum :role, { student: 0, admin: 1 }, default: :student
+
+  def is_admin?
+    role == "admin"
+  end
 end

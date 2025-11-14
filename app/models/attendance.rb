@@ -28,4 +28,16 @@ class Attendance < ApplicationRecord
       errors.add(:base, "この授業の出席受付は終了しました。")
     end
   end
+
+  STATUS_JA = {
+    "attended"          => "出席",
+    "absent"            => "欠席",
+    "late"              => "遅刻",
+    "officially_absent" => "公欠"
+  }.freeze
+
+  def status_ja
+    # データベースにレコードが存在するが status が nil の場合も考慮
+    STATUS_JA[status] || "未定義" 
+  end
 end

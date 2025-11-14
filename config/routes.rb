@@ -1,33 +1,43 @@
 # config/routes.rb
 
 Rails.application.routes.draw do
+  # Deviseの認証ルート
   devise_for :users
-  
-  # Reveal health status on /up ...
+
+  # Rails 標準ヘルスチェック
   get "up" => "rails/health#show", as: :rails_health_check
-  get "health" => "rails/health#show", as: :rails_health_check
 
   # =======================================================
-  # 管理者専用のルート (ID: 6)
+  # ログイン前トップページ（/）
+  # =======================================================
+  # ルートパスをDeviseのログイン画面に設定 (Deviseスコープ内で定義が必要)
+  devise_scope :user do
+    root "devise/sessions#new", as: :authenticated_root
+  end
+
+  # =======================================================
+  # 管理者専用ルート /admin
   # =======================================================
   namespace :admin do
-    # /admin/ にアクセスしたら admin/users#index へ
-    root 'users#index', as: 'root' 
-    
-    # /admin/users へのルートを作成
+    # /admin にアクセスしたら管理者トップ (Admin::Users#index)
+    # after_sign_in_path_for でリダイレクトされるパス
+    root "users#index", as: "root"
+
+    # 管理者・ユーザー一覧 (現時点では index と show のみ)
     resources :users, only: [:index, :show]
   end
 
   # =======================================================
-  # 学生用のルート (ログイン後画面) (ID: 5)
+  # 学生用 /student
   # =======================================================
-  # resource :student は /student のルートを作成します
-  # [重要] 'resources:' から 'resource :' に修正し、コロンとスペースも修正
-  resource :student, only: [] do 
-     # /student にアクセスしたら attendances#index へ
-     root 'attendances#index', as: 'root'
+  # resource :student は単数形リソースで、/student のルートを生成します
+  resource :student, only: [] do
+    # /student にアクセス → Attendances#index
+    # after_sign_in_path_for でリダイレクトされるパス
+    root "attendances#index", as: "root"
 
-    # 出欠を登録するためのルート /student/attendances
+    # 出欠登録用（例：POST /student/attendances）
     resources :attendances, only: [:create]
   end
+
 end

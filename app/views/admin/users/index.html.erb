@@ -1,0 +1,95 @@
+<header class="admin-header">
+  <div class="app-title">出欠管理アプリ</div>
+  <%= link_to "ログアウト", destroy_user_session_path, data: { turbo_method: :delete }, class: "logout-link" %>
+</header>
+
+<div class="admin-content-container">
+  
+  <div class="search-block attendance-search">
+    <h2>出欠一覧</h2>
+    
+    <%= form_with url: admin_root_path, method: :get, local: true do %>
+      <div class="search-fields">
+
+        <input type="number" name="year"  placeholder="年"  value="<%= @search_params[:year] %>" >
+        <input type="number" name="month" placeholder="月"  value="<%= @search_params[:month] %>" >
+        <input type="number" name="day"   placeholder="日"  value="<%= @search_params[:day] %>" >
+        <input type="number" name="period" placeholder="コマ" value="<%= @search_params[:period] %>" >
+
+        <select name="enrollment_year">
+          <option value="">年度入学学生</option>
+          <option value="2025" <%= "selected" if @search_params[:enrollment_year] == "2025" %>>2025年度</option>
+        </select>
+
+        <button type="submit" class="search-btn">検索</button>
+      </div>
+    <% end %>
+
+  </div>
+
+
+
+
+  <% if @display_date %>
+  <div class="attendance-results">
+    <h3><%= @display_date.strftime("%Y年%m月%d日") %> の出欠状況</h3>
+    
+    <table class="attendance-table">
+      <thead>
+        <tr>
+          <th>学生名</th>
+          <th>学籍番号</th>
+          <% @periods.each do |period| %>
+            <th>
+              <%= period.weekday_ja %> <%= period.period_number %>限 
+              (ID:<%= period.id %>) 
+            </th>
+          <% end %>
+        </tr>
+      </thead>
+      <tbody>
+        <% @target_users.each do |user| %>
+          <tr>
+            <td><%= user.name %></td>
+            <td><%= user.student_id %></td>
+            <% @periods.each do |period| %>
+              <% attendance = @attendances_by_student[user.id] && @attendances_by_student[user.id][period.id] %>
+              
+              <td class="<%= attendance&.status %>">
+                <% if attendance %>
+                  <%= attendance.status_ja %> 
+                  <% if attendance.reason.present? %>
+                    <span title="<%= attendance.reason %>">ⓘ</span>
+                  <% end %>
+                <% else %>
+                  -
+                <% end %>
+              </td>
+            <% end %>
+          </tr>
+        <% end %>
+      </tbody>
+    </table>
+  </div>
+<% end %>
+
+  ---
+
+  <div class="search-block aggregate-search">
+    <h2>累計一覧</h2>
+    
+    <%= form_with url: admin_root_path, method: :get, local: true do %>
+      <div class="search-fields">
+
+        <select name="enrollment_year">
+          <option value="">年度入学学生</option>
+          <option value="2025" <%= "selected" if @search_params[:enrollment_year] == "2025" %>>2025年度</option>
+        </select>
+
+        <button type="submit" class="search-btn">集計</button>
+      </div>
+    <% end %>
+
+  </div>
+
+</div>
