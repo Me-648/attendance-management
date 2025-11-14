@@ -5,6 +5,7 @@ Rails.application.routes.draw do
   
   # Reveal health status on /up ...
   get "up" => "rails/health#show", as: :rails_health_check
+  get "health" => "rails/health#show", as: :rails_health_check
 
   # =======================================================
   # 管理者専用のルート (ID: 6)

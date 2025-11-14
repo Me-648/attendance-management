@@ -7,29 +7,17 @@ class User < ApplicationRecord
   has_many :attendances
 
   # バリデーション
-  # 学生の場合のみ、student_id(学籍番号)とenrollment_year(入学年度)を必須にするロジック
-  validates :student_id, presence: true, uniqueness: true, if: :is_student?
-  validates :enrollment_year, presence: true, if: :is_student?
+  # 学生の場合のみ、student_id(学籍番号)とenrollment_year(入学年度)を必須にする
+  validates :student_id, presence: true, uniqueness: true, if: :student?
+  validates :enrollment_year, presence: true, if: :student?
 
   # emailは全員必須
   validates :email, presence: true, uniqueness: true
 
-  # roleのデフォルト値(新規作成は学生なので0)を設定
-  after_initialize :set_default_role, if: :new_record?
-
-
-  # ヘルパーメソッド
-  def is_admin?
-    self.role == 1
-  end
-
-  def is_student?
-    self.role == 0
-  end
-
-  private
-
-  def set_default_role
-    self.role ||= 0
-  end
+  # roleカラムにenumを定義
+  # 0: student, 1: admin
+  # デフォルトは student
+  # Rails 7.1+ の構文。`student?` や `admin?` といったヘルパーメソッドが自動で定義されます。
+  # `default: :student` により、新規作成時に自動で `student` が設定されます。
+  enum :role, { student: 0, admin: 1 }, default: :student
 end
