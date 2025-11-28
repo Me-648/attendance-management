@@ -9,6 +9,8 @@ Rails.application.routes.draw do
   namespace :admin do
     root "users#index"
     resources :users, only: [ :index, :show ]
+    get "attendance_list", to: "users#attendance_list"
+    get "absence_list", to: "users#absence_list"
   end
 
   # 学生用のルート (ID: 5)

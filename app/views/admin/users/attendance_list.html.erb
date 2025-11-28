@@ -1,0 +1,128 @@
+<div class="admin-container">
+  <header class="admin-header">
+    <h1>出席管理アプリ</h1>
+    <div class="logout-link">
+      <%= link_to "ログアウト", destroy_user_session_path, data: { turbo_method: :delete } %>
+    </div>
+  </header>
+
+  <main class="attendance-list-main">
+    <% if @period && @date %>
+      <div class="date-info">
+        <%= @date.strftime("%Y年%m月%d日") %> <%= @period.weekday_ja %>コマ <%= @period.period_number %> 
+        <% if @enrollment_year.present? %>
+          <%= @enrollment_year %>年度入学生
+        <% end %>
+      </div>
+      
+      <div class="stats">
+        出席：<%= @attended_count %>名　
+        欠席：<%= @absent_count %>名
+      </div>
+
+      <div class="attendance-grid">
+        <% @students.each do |student| %>
+          <% attendance = @attendances[student.id] %>
+          <div class="student-cell <%= 'absent' if attendance&.status == 'absent' %>">
+            <%= student.name %>
+          </div>
+        <% end %>
+      </div>
+
+      <div class="back-link">
+        <%= link_to "← 戻る", admin_root_path %>
+      </div>
+    <% else %>
+      <% if flash[:alert] %>
+        <p class="alert"><%= flash[:alert] %></p>
+      <% end %>
+      <div class="back-link">
+        <%= link_to "← 戻る", admin_root_path %>
+      </div>
+    <% end %>
+  </main>
+</div>
+
+<style>
+  .admin-container {
+    max-width: 800px;
+    margin: 0 auto;
+    padding: 20px;
+    font-family: sans-serif;
+  }
+
+  .admin-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 30px;
+  }
+
+  .admin-header h1 {
+    font-size: 24px;
+    margin: 0;
+  }
+
+  .logout-link a {
+    color: #333;
+    text-decoration: none;
+  }
+
+  .attendance-list-main {
+    background-color: #fff;
+  }
+
+  .date-info {
+    font-size: 18px;
+    font-weight: bold;
+    margin-bottom: 10px;
+  }
+
+  .stats {
+    font-size: 16px;
+    margin-bottom: 20px;
+  }
+
+  .attendance-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 0;
+    border: 1px solid #ccc;
+    margin-bottom: 20px;
+  }
+
+  .student-cell {
+    border: 1px solid #ccc;
+    padding: 15px 10px;
+    text-align: center;
+    background-color: white;
+    font-size: 14px;
+  }
+
+  .student-cell.absent {
+    background-color: #cc6666;
+    color: white;
+  }
+
+  .back-link {
+    margin-top: 20px;
+  }
+
+  .back-link a {
+    color: #0066cc;
+    text-decoration: none;
+  }
+
+  .back-link a:hover {
+    text-decoration: underline;
+  }
+
+  .alert {
+    padding: 15px;
+    background-color: #ffebee;
+    border: 1px solid #f44336;
+    border-radius: 4px;
+    margin-bottom: 20px;
+    color: #c62828;
+  }
+</style>
