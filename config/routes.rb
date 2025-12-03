@@ -13,6 +13,8 @@ Rails.application.routes.draw do
     get "absence_list", to: "users#absence_list"
     # 欠席理由画面を追加
     get "absence_reason/:id", to: "users#absence_reason", as: :absence_reason
+    # 累計画面を追加
+    get "student_total/:id", to: "users#student_total", as: :student_total
   end
 
   # 学生用のルート (ID: 5)

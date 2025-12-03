@@ -4,9 +4,7 @@ class Admin::UsersController < ApplicationController
   
   def index; end
 
-  # 出欠一覧画面
   def attendance_list
-    # パラメータのマッピング
     form_params = {
       year: params[:year],
       month: params[:month],
@@ -16,22 +14,19 @@ class Admin::UsersController < ApplicationController
     }
     
     @search_form = Admin::AttendanceSearchForm.new(form_params)
-  
+
     if params[:year].present?
       if @search_form.search
-        # 成功時はフォームから結果を取り出す
         @students = @search_form.students
         @attendances = @search_form.attendances
         @attended_count = @search_form.attended_count
         @absent_count = @search_form.absent_count
-        @unrecorded_count = @search_form.unrecorded_count  # 追加
+        @unrecorded_count = @search_form.unrecorded_count
         
-        # 未記録が多い場合に警告
         if @unrecorded_count > 0
           flash.now[:notice] = "#{@unrecorded_count}名の出席データがまだ記録されていません。"
         end
         
-        # ビューで使う変数をセット
         @date = @search_form.date
         @period = @search_form.period
       else
@@ -43,37 +38,58 @@ class Admin::UsersController < ApplicationController
     end
   end
   
-  # 累計一覧画面（欠席者リスト）
   def absence_list
     @enrollment_year = params[:enrollment_year]
     
-    # 学生を取得（入学年度でフィルタ可能）
     @students = User.student.order(:student_id)
     @students = @students.where(enrollment_year: @enrollment_year) if @enrollment_year.present?
     
-    # 各学生の欠席回数を一括集計（N+1問題を解消）
-    # デフォルト値を0にするため Hash.new(0) を使用
     @absence_counts = Hash.new(0).merge(Attendance.status_absent.group(:user_id).count)
   end
-
-  # 欠席理由画面（新規追加）
+  
   def absence_reason
-    # URLパラメータからAttendance IDを取得
     @attendance = Attendance.find(params[:id])
-    
-    # 出席データに紐づく学生情報を取得
     @student = @attendance.user
-    
-    # 出席データに紐づく授業情報を取得
     @period = @attendance.period
     
-    # セキュリティチェック: 欠席以外のデータはアクセス拒否
     unless @attendance.status == 'absent'
       redirect_to admin_root_path, alert: "欠席者のみアクセスできます。"
     end
   rescue ActiveRecord::RecordNotFound
-    # 存在しないIDの場合
     redirect_to admin_root_path, alert: "出席データが見つかりませんでした。"
+  end
+  
+  # 累計画面（新規追加）
+  def student_total
+    # 学生情報を取得
+    @student = User.find(params[:id])
+    
+    # 学生でない場合はエラー
+    unless @student.student?
+      redirect_to admin_root_path, alert: "学生情報が見つかりませんでした。"
+      return
+    end
+    
+    # その学生の全出席データを取得
+    attendances = Attendance.where(user_id: @student.id)
+    
+    # 出席数を集計
+    @attended_count = attendances.status_attended.count
+    
+    # 欠席数を集計
+    @absent_count = attendances.status_absent.count
+    
+    # 遅刻数を集計
+    @late_count = attendances.status_late.count
+    
+    # 公欠数を集計
+    @officially_absent_count = attendances.status_officially_absent.count
+    
+    # 合計授業数（出席データがある授業の数）
+    @total_count = attendances.count
+    
+  rescue ActiveRecord::RecordNotFound
+    redirect_to admin_root_path, alert: "学生情報が見つかりませんでした。"
   end
   
   private
@@ -83,7 +99,7 @@ class Admin::UsersController < ApplicationController
     @attendances = {}
     @absent_count = 0
     @attended_count = 0
-    @unrecorded_count = 0  # 追加
+    @unrecorded_count = 0
   end
   
   def check_admin
