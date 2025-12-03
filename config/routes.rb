@@ -11,6 +11,8 @@ Rails.application.routes.draw do
     resources :users, only: [ :index, :show ]
     get "attendance_list", to: "users#attendance_list"
     get "absence_list", to: "users#absence_list"
+    # 欠席理由画面を追加
+    get "absence_reason/:id", to: "users#absence_reason", as: :absence_reason
   end
 
   # 学生用のルート (ID: 5)

@@ -10,6 +10,7 @@
 
 # 開発環境をクリーンに保つため、データを全て削除
 puts '既存データを全て削除します...'
+Period.destroy_all
 Attendance.destroy_all
 Period.destroy_all
 User.destroy_all
@@ -30,16 +31,18 @@ User.create!(
 puts '  -> admin@example.com (パスワード: password) 作成完了'
 
 # --- 2. 時間割（Periods）データの作成 ---
-# 月曜(1)から金曜(5)までのコマを定義
 puts '2. 時間割（Periods）データを作成中...'
+
+# 各コマの開始時刻を定義
 PERIOD_TIMES = [
-  { period_number: 1, start_time: '09:30:00' }
+  { period_number: 1, start_time: '09:30:00' },  # 9:30~11:10
+  { period_number: 2, start_time: '11:20:00' },  # 11:20~13:00
+  { period_number: 3, start_time: '13:45:00' }   # 13:45~15:25
 ]
 
-(1..5).each do |weekday| # 1:月曜 〜 5:金曜
-  periods_to_create = PERIOD_TIMES
-  
-  periods_to_create.each do |p_data|
+# 月曜(1) 〜 木曜(4): 3コマ
+(1..4).each do |weekday|
+  PERIOD_TIMES.each do |p_data|
     Period.create!(
       period_number: p_data[:period_number],
       weekday: weekday,
@@ -47,6 +50,16 @@ PERIOD_TIMES = [
     )
   end
 end
+
+# 金曜(5): 2コマのみ
+PERIOD_TIMES.take(2).each do |p_data|
+  Period.create!(
+    period_number: p_data[:period_number],
+    weekday: 5,
+    start_time: p_data[:start_time]
+  )
+end
+
 puts "  -> 全#{Period.count}コマの時間割を作成完了"
 
 # --- 3. 大量の学生アカウントを作成 ---
