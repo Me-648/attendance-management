@@ -33,19 +33,12 @@ puts '  -> admin@example.com (パスワード: password) 作成完了'
 # 月曜(1)から金曜(5)までのコマを定義
 puts '2. 時間割（Periods）データを作成中...'
 PERIOD_TIMES = [
-  { period_number: 1, start_time: '09:30:00' },
-  { period_number: 2, start_time: '11:20:00' },
-  { period_number: 3, start_time: '13:45:00' }
+  { period_number: 1, start_time: '09:30:00' }
 ]
 
 (1..5).each do |weekday| # 1:月曜 〜 5:金曜
   periods_to_create = PERIOD_TIMES
   
-  # 金曜日(5)は2コマのみ
-  if weekday == 5
-    periods_to_create = PERIOD_TIMES.reject { |p| p[:period_number] == 3 }
-  end
-
   periods_to_create.each do |p_data|
     Period.create!(
       period_number: p_data[:period_number],
@@ -56,60 +49,78 @@ PERIOD_TIMES = [
 end
 puts "  -> 全#{Period.count}コマの時間割を作成完了"
 
-# --- 3. サンプル学生アカウントの作成 ---
-puts '3. サンプル学生アカウントを作成中...'
-student_a = User.create!(
-  email: 'a@student.com',
-  password: 'password',
-  password_confirmation: 'password',
-  name: '田中太郎 (2025)',
-  role: :student,
-  student_id: 'A1000001',
-  enrollment_year: 2025 
-)
-student_b = User.create!(
-  email: 'b@student.com',
-  password: 'password',
-  password_confirmation: 'password',
-  name: '佐藤花子 (2024)',
-  role: :student,
-  student_id: 'B2000002',
-  enrollment_year: 2024
-)
-puts '  -> サンプル学生アカウント作成完了'
+# --- 3. 大量の学生アカウントを作成 ---
+puts '3. 学生アカウントを作成中...'
 
-# --- 4. サンプル出欠実績（Attendances）の作成 ---
-puts '4. サンプル出欠実績を作成中...'
-# 月曜1限目（ID: 1）を取得
-mon_1st_period = Period.find_by!(weekday: 1, period_number: 1)
-# 金曜2限目（ID: 11 - ※連番の場合）を取得
-fri_2nd_period = Period.find_by!(weekday: 5, period_number: 2)
+# 2024年度入学生30名を作成
+student_names = [
+  '田中太郎', '田中花子', '田中', '田中',
+  '佐藤一郎', '佐藤美咲', '佐藤健太', '佐藤',
+  '鈴木次郎', '鈴木由美', '鈴木大輔', '鈴木',
+  '高橋三郎', '高橋麻衣', '高橋拓也', '高橋',
+  '伊藤四郎', '伊藤愛', '伊藤翔太', '伊藤',
+  '渡辺五郎', '渡辺優子', '渡辺翔', '渡辺',
+  '山本六郎', '山本真由', '山本健', '山本',
+  '中村七郎', '中村彩', '中村', '中村'
+]
 
-# 田中太郎の過去の出欠を作成
-attendance1 = Attendance.new(user: student_a, period: mon_1st_period, date: Date.today.ago(7.days), status: :attended)
-attendance1.save(validate: false)
+students = []
+student_names.each_with_index do |name, index|
+  student = User.create!(
+    email: "student#{index + 1}@example.com",
+    password: 'password',
+    password_confirmation: 'password',
+    name: name,
+    role: :student,
+    student_id: "S2024#{(index + 1).to_s.rjust(4, '0')}",
+    enrollment_year: 2024
+  )
+  students << student
+end
 
-attendance2 = Attendance.new(
-  user: student_a, 
-  period: fri_2nd_period, 
-  date: Date.today.ago(3.days), 
-  status: :absent, 
-  reason: '体調不良のため'
-)
-attendance2.save(validate: false)
+puts "  -> #{students.count}名の学生アカウント作成完了"
 
+# --- 4. 大量の出欠実績（Attendances）を作成 ---
+puts '4. 出欠実績を作成中...'
 
-# 佐藤花子の過去の出欠を作成
-attendance3 = Attendance.new(
-  user: student_b, 
-  period: mon_1st_period, 
-  date: Date.today.ago(7.days), 
-  status: :absent, 
-  reason: '親族の法事'
-)
-attendance3.save(validate: false)
+# 2025年10月14日(火)のデータを作成
+target_date = Date.new(2025, 10, 14) # 火曜日
+tue_period = Period.find_by!(weekday: 2, period_number: 1) # 火曜1限
 
-puts "  -> サンプル出欠実績 #{Attendance.count}件作成完了"
+attendance_count = 0
+
+students.each_with_index do |student, index|
+  # ランダムに欠席者を4名程度作成（indexが3の倍数+1の場合）
+  status = if [1, 7, 15, 23].include?(index)
+    :absent
+  else
+    :attended
+  end
+
+  attendance = Attendance.new(
+    user: student,
+    period: tue_period,
+    date: target_date,
+    status: status
+  )
+  attendance.save(validate: false)
+  attendance_count += 1
+end
+
+# 追加の出席データ（過去の日付でも数件作成）
+students.sample(10).each do |student|
+  mon_period = Period.find_by!(weekday: 1, period_number: 1)
+  attendance = Attendance.new(
+    user: student,
+    period: mon_period,
+    date: Date.new(2025, 10, 7),
+    status: [:attended, :absent].sample
+  )
+  attendance.save(validate: false)
+  attendance_count += 1
+end
+
+puts "  -> #{attendance_count}件の出欠実績作成完了"
 puts '=================================================='
 puts 'シードデータ投入完了！開発を開始できます。'
 puts '管理者: admin@example.com / 学生: a@student.com (どちらもパスワード: password)'
