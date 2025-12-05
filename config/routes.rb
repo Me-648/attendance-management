@@ -7,15 +7,16 @@ Rails.application.routes.draw do
 
   # 管理者専用ルート (ID: 6)
   namespace :admin do
-    root "users#index"
-    resources :users, only: [ :index, :show ]
-    get "attendance_list", to: "users#attendance_list"
-    get "absence_list", to: "users#absence_list"
-    # 欠席理由画面を追加
-    get "absence_reason/:id", to: "users#absence_reason", as: :absence_reason
-    # 累計画面を追加
-    get "student_total/:id", to: "users#student_total", as: :student_total
+    root 'pages#home'
+  
+    get 'home', to: 'pages#home'
+  
+    get 'attendance_search_result', to: 'attendances#attendance_search_result'
+    get 'absence_list',            to: 'attendances#absence_list'
+    get 'absence_reason/:id',      to: 'attendances#absence_reason'
+    get 'student_total/:id',       to: 'attendances#student_total'
   end
+  
 
   # 学生用のルート (ID: 5)
   namespace :student do
