@@ -1,0 +1,15 @@
+<!-- 出欠一覧セクション -->
+<section class="search-section">
+  <h2 class="section-title">出欠一覧</h2>
+  <%= form_with url: admin_attendance_list_path, method: :get, class: "search-form" do |f| %>
+  <div class="form-row">
+    <%= f.number_field :year, placeholder: "年", class: "input-field input-year", min: 2020, max: 2030 %>
+    <%= f.number_field :month, placeholder: "月", class: "input-field input-month", min: 1, max: 12 %>
+    <%= f.number_field :day, placeholder: "日", class: "input-field input-day", min: 1, max: 31 %>
+  </div>
+  <div class="form-row">
+    <%= f.text_field :enrollment_year, placeholder: "年度入学生", class: "input-field input-enrollment" %>
+    <%= f.submit "検索", class: "btn-search" %>
+  </div>
+  <% end %>
+</section>

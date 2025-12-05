@@ -1,0 +1,44 @@
+<%= turbo_frame_tag "attendance_search_result" do %>
+<div class="results-container">
+  <div class="results-header">
+    <h3><%= @year %>年<%= @month %>月<%= @day %>日 <%= @period.period_number %>コマ目 <%= @enrollment_year %>年度入学生</h3>
+    <p>出席：<%= @attended_count %>名　欠席：<%= @absent_count %>名</p>
+    <% if @unrecorded_count > 0 %>
+      <p class="notice">※ <%= @unrecorded_count %>名の出席データが未記録です</p>
+    <% end %>
+  </div>
+
+  <div class="period-buttons">
+
+  <%# 年月日から曜日を求める %>
+  <% date = Date.new(@year.to_i, @month.to_i, @day.to_i) %>
+
+  <%# 金曜 (wday = 5) は2コマ、それ以外は3コマ %>
+  <% max_period = (date.wday == 5 ? 2 : 3) %>
+
+  <%# 1〜max_period までボタン生成 %>
+  <% (1..max_period).each do |period_num| %>
+    <%= link_to "#{period_num}コマ目",
+      admin_attendance_search_result_path(
+        year: @year,
+        month: @month,
+        day: @day,
+        enrollment_year: @enrollment_year,
+        period: period_num
+      ),
+      class: "period-btn #{@current_period.to_s == period_num.to_s ? 'active' : ''}",
+      data: { turbo_frame: "attendance_search_result" } %>
+    <% end %>
+  </div>
+
+
+  <div class="attendance-grid">
+    <% @students.each do |student| %>
+      <% attendance = @attendances[student.id] %>
+      <div class="student-card <%= attendance&.status || 'unrecorded' %>">
+        <%= student.name %>
+      </div>
+    <% end %>
+  </div>
+</div>
+<% end %>
