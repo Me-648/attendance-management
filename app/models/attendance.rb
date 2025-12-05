@@ -6,8 +6,8 @@ class Attendance < ApplicationRecord
   enum :status, { attended: 0, absent: 1, late: 2, officially_absent: 3 }, prefix: true
 
   # 1人のユーザーは、1つの授業に1回しか出席登録できないようにします。
-  validates :user_id, uniqueness: { scope: [:period_id, :date], message: "は既に登録済みです。" }
- 
+  validates :user_id, uniqueness: { scope: [ :period_id, :date ], message: "は既に登録済みです。" }
+
   # 出席登録可能な時間帯かどうかを検証するカスタムバリデーション
   validate :time_to_attend, on: :create, if: :status_attended?
 

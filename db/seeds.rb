@@ -8,15 +8,7 @@
 #     MovieGenre.find_or_create_by!(name: genre_name)
 #   end
 
-# 開発環境をクリーンに保つため、データを全て削除
-puts '既存データを全て削除します...'
-Attendance.destroy_all
-Period.destroy_all
-User.destroy_all
-puts '削除完了'
-
 # --- 1. 管理者アカウントの作成 ---
-puts '1. 管理者アカウントを作成中...'
 User.create!(
   email: 'admin@example.com',
   password: 'password',
@@ -25,13 +17,10 @@ User.create!(
   role: :admin,
   # 管理者のため、student_idとenrollment_yearはnil (NULL)
   student_id: nil,
-  enrollment_year: nil 
+  enrollment_year: nil
 )
-puts '  -> admin@example.com (パスワード: password) 作成完了'
 
 # --- 2. 時間割（Periods）データの作成 ---
-# 月曜(1)から金曜(5)までのコマを定義
-puts '2. 時間割（Periods）データを作成中...'
 PERIOD_TIMES = [
   { period_number: 1, start_time: '09:30:00' },
   { period_number: 2, start_time: '11:20:00' },
@@ -40,7 +29,7 @@ PERIOD_TIMES = [
 
 (1..5).each do |weekday| # 1:月曜 〜 5:金曜
   periods_to_create = PERIOD_TIMES
-  
+
   # 金曜日(5)は2コマのみ
   if weekday == 5
     periods_to_create = PERIOD_TIMES.reject { |p| p[:period_number] == 3 }
@@ -54,10 +43,8 @@ PERIOD_TIMES = [
     )
   end
 end
-puts "  -> 全#{Period.count}コマの時間割を作成完了"
 
 # --- 3. サンプル学生アカウントの作成 ---
-puts '3. サンプル学生アカウントを作成中...'
 student_a = User.create!(
   email: 'a@student.com',
   password: 'password',
@@ -65,7 +52,7 @@ student_a = User.create!(
   name: '田中太郎 (2025)',
   role: :student,
   student_id: 'A1000001',
-  enrollment_year: 2025 
+  enrollment_year: 2025
 )
 student_b = User.create!(
   email: 'b@student.com',
@@ -76,24 +63,22 @@ student_b = User.create!(
   student_id: 'B2000002',
   enrollment_year: 2024
 )
-puts '  -> サンプル学生アカウント作成完了'
 
 # --- 4. サンプル出欠実績（Attendances）の作成 ---
-puts '4. サンプル出欠実績を作成中...'
 # 月曜1限目（ID: 1）を取得
 mon_1st_period = Period.find_by!(weekday: 1, period_number: 1)
 # 金曜2限目（ID: 11 - ※連番の場合）を取得
 fri_2nd_period = Period.find_by!(weekday: 5, period_number: 2)
 
 # 田中太郎の過去の出欠を作成
-attendance1 = Attendance.new(user: student_a, period: mon_1st_period, date: Date.today.ago(7.days), status: :attended)
+attendance1 = Attendance.new(user: student_a, period: mon_1st_period, date: Time.zone.today.ago(7.days), status: :attended)
 attendance1.save(validate: false)
 
 attendance2 = Attendance.new(
-  user: student_a, 
-  period: fri_2nd_period, 
-  date: Date.today.ago(3.days), 
-  status: :absent, 
+  user: student_a,
+  period: fri_2nd_period,
+  date: Time.zone.today.ago(3.days),
+  status: :absent,
   reason: '体調不良のため'
 )
 attendance2.save(validate: false)
@@ -101,16 +86,10 @@ attendance2.save(validate: false)
 
 # 佐藤花子の過去の出欠を作成
 attendance3 = Attendance.new(
-  user: student_b, 
-  period: mon_1st_period, 
-  date: Date.today.ago(7.days), 
-  status: :absent, 
+  user: student_b,
+  period: mon_1st_period,
+  date: Time.zone.today.ago(7.days),
+  status: :absent,
   reason: '親族の法事'
 )
 attendance3.save(validate: false)
-
-puts "  -> サンプル出欠実績 #{Attendance.count}件作成完了"
-puts '=================================================='
-puts 'シードデータ投入完了！開発を開始できます。'
-puts '管理者: admin@example.com / 学生: a@student.com (どちらもパスワード: password)'
-puts '=================================================='

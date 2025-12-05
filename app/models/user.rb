@@ -4,7 +4,7 @@ class User < ApplicationRecord
   devise :database_authenticatable, :registerable,
         :recoverable, :rememberable, :validatable
 
-  has_many :attendances
+  has_many :attendances, dependent: :destroy
 
   # 学生の場合のみ、student_id(学籍番号)とenrollment_year(入学年度)を必須にする
   validates :student_id, presence: true, uniqueness: true, if: :student?
