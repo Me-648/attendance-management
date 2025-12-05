@@ -13,8 +13,8 @@ Rails.application.routes.draw do
   
     get 'attendance_search_result', to: 'attendances#attendance_search_result'
     get 'absence_list',            to: 'attendances#absence_list'
-    get 'absence_reason/:id',      to: 'attendances#absence_reason'
-    get 'student_total/:id',       to: 'attendances#student_total'
+    get 'absence_reason/:id',      to: 'attendances#absence_reason', as: :absence_reason
+    get 'student_total/:id',       to: 'attendances#student_total', as: :student_total
   end
   
 

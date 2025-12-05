@@ -36,7 +36,11 @@
     <% @students.each do |student| %>
       <% attendance = @attendances[student.id] %>
       <div class="student-card <%= attendance&.status || 'unrecorded' %>">
-        <%= student.name %>
+        <% if attendance&.status == 'absent' %>
+          <%= link_to student.name, admin_absence_reason_path(attendance.id), data: { turbo_frame: "_top" } %>
+        <% else %>
+          <%= student.name %>
+        <% end %>
       </div>
     <% end %>
   </div>
