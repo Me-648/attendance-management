@@ -1,13 +1,35 @@
 # Read about fixtures at https://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
 
-one:
-  name: MyString
-  role: 1
-  student_id: MyString
-  enrollment_year: 1
+# 学生ユーザー
+student_taro:
+  name: 田中太郎
+  role: 0
+  student_id: S2024001
+  enrollment_year: 2024
+  email: taro@example.com
+  encrypted_password: <%= Devise::Encryptor.digest(User, 'password123') %>
 
-two:
-  name: MyString
+student_hanako:
+  name: 山田花子
+  role: 0
+  student_id: S2024002
+  enrollment_year: 2024
+  email: hanako@example.com
+  encrypted_password: <%= Devise::Encryptor.digest(User, 'password123') %>
+
+student_jiro:
+  name: 佐藤次郎
+  role: 0
+  student_id: S2023001
+  enrollment_year: 2023
+  email: jiro@example.com
+  encrypted_password: <%= Devise::Encryptor.digest(User, 'password123') %>
+
+# 管理者ユーザー
+admin_user:
+  name: 管理者
   role: 1
-  student_id: MyString
-  enrollment_year: 1
+  student_id:
+  enrollment_year:
+  email: admin@example.com
+  encrypted_password: <%= Devise::Encryptor.digest(User, 'password123') %>

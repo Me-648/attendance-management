@@ -13,10 +13,8 @@ class AttendanceSearchForm
   validate :validate_period
 
   # 未記録数を追加
-  attr_reader :date, :period, :students, :attendances, 
+  attr_reader :date, :period, :students, :attendances,
               :attended_count, :absent_count, :unrecorded_count
-
-  period_number = 0
 
   def initialize(attributes = {})
     super
@@ -41,8 +39,8 @@ class AttendanceSearchForm
       @attendances = attendances_list.index_by(&:user_id)
 
       # 3. 集計
-      @attended_count = attendances_list.count { |a| a.status == 'attended' }
-      @absent_count = attendances_list.count { |a| a.status == 'absent' }
+      @attended_count = attendances_list.count { |a| a.status == "attended" }
+      @absent_count = attendances_list.count { |a| a.status == "absent" }
       @unrecorded_count = @students.count - attendances_list.count
     else
       @attendances = Attendance.where(user_id: current_user, date: @date).index_by(&:period_id)
@@ -67,7 +65,7 @@ class AttendanceSearchForm
 
     weekday = @date.cwday
     @period = Period.find_by(weekday: weekday, period_number: period_number)
-      
+
     unless @period && period_number != 0
       errors.add(:base, "指定された曜日・コマの授業が見つかりませんでした。")
     end

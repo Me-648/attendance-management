@@ -23,7 +23,7 @@ module Student
     private
 
     def attendance_params
-      params.require(:attendance).permit(:period_id, :status, :reason).merge(date: Time.zone.today)
+      params.expect(attendance: [ :period_id, :status, :reason ]).merge(date: Time.zone.today)
     end
 
     def check_student_role

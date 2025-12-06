@@ -1,11 +1,76 @@
 # Read about fixtures at https://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
 
-one:
+# 月曜日の授業（3コマ）
+monday_first:
   period_number: 1
   weekday: 1
-  start_time: 2025-10-17 10:13:21
+  start_time: 2000-01-01 09:00:00
 
-two:
-  period_number: 1
+monday_second:
+  period_number: 2
   weekday: 1
-  start_time: 2025-10-17 10:13:21
+  start_time: 2000-01-01 10:40:00
+
+monday_third:
+  period_number: 3
+  weekday: 1
+  start_time: 2000-01-01 13:00:00
+
+# 火曜日の授業（3コマ）
+tuesday_first:
+  period_number: 1
+  weekday: 2
+  start_time: 2000-01-01 09:00:00
+
+tuesday_second:
+  period_number: 2
+  weekday: 2
+  start_time: 2000-01-01 10:40:00
+
+tuesday_third:
+  period_number: 3
+  weekday: 2
+  start_time: 2000-01-01 13:00:00
+
+# 水曜日の授業（3コマ）
+wednesday_first:
+  period_number: 1
+  weekday: 3
+  start_time: 2000-01-01 09:00:00
+
+wednesday_second:
+  period_number: 2
+  weekday: 3
+  start_time: 2000-01-01 10:40:00
+
+wednesday_third:
+  period_number: 3
+  weekday: 3
+  start_time: 2000-01-01 13:00:00
+
+# 木曜日の授業（3コマ）
+thursday_first:
+  period_number: 1
+  weekday: 4
+  start_time: 2000-01-01 09:00:00
+
+thursday_second:
+  period_number: 2
+  weekday: 4
+  start_time: 2000-01-01 10:40:00
+
+thursday_third:
+  period_number: 3
+  weekday: 4
+  start_time: 2000-01-01 13:00:00
+
+# 金曜日の授業（2コマ）
+friday_first:
+  period_number: 1
+  weekday: 5
+  start_time: 2000-01-01 09:00:00
+
+friday_second:
+  period_number: 2
+  weekday: 5
+  start_time: 2000-01-01 10:40:00
