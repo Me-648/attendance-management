@@ -1,140 +1,149 @@
-# This file should ensure the existence of records required to run the application in every environment (production,
-# development, test). The code here should be idempotent so that it can be executed at any point in every environment.
-# The data can then be loaded with the bin/rails db:seed command (or created alongside the database with db:setup).
+# ==============================================================================
+# 出欠データの内訳（各コマ30人分）
+# ==============================================================================
 #
-# Example:
+# ■ 月曜日（2025/12/1）
+#   1限目: 出席22名, 欠席3名, 遅刻3名, 公欠2名
+#   2限目: 出席24名, 欠席2名, 遅刻2名, 公欠2名
+#   3限目: 出席20名, 欠席4名, 遅刻4名, 公欠2名
 #
-#   ["Action", "Comedy", "Drama", "Horror"].each do |genre_name|
-#     MovieGenre.find_or_create_by!(name: genre_name)
-#   end
-
-# 開発環境をクリーンに保つため、データを全て削除
-puts '既存データを全て削除します...'
-Period.destroy_all
-Attendance.destroy_all
-Period.destroy_all
-User.destroy_all
-puts '削除完了'
+# ■ 火曜日（2025/12/2）
+#   1限目: 出席23名, 欠席2名, 遅刻3名, 公欠2名
+#   2限目: 出席25名, 欠席2名, 遅刻2名, 公欠1名
+#   3限目: 出席21名, 欠席3名, 遅刻4名, 公欠2名
+#
+# ■ 水曜日（2025/12/3）
+#   1限目: 出席24名, 欠席2名, 遅刻2名, 公欠2名
+#   2限目: 出席22名, 欠席3名, 遅刻3名, 公欠2名
+#   3限目: 出席23名, 欠席2名, 遅刻3名, 公欠2名
+#
+# ■ 金曜日（2025/12/5）※2コマのみ
+#   1限目: 出席25名, 欠席2名, 遅刻2名, 公欠1名
+#   2限目: 出席23名, 欠席3名, 遅刻2名, 公欠2名
+#
+# ------------------------------------------------------------------------------
+# 合計出欠レコード数: 330件（30人 × 11コマ）
+#
+# 欠席理由:
+#   - 欠席: 体調不良のため, 通院のため, 家庭の事情
+#   - 遅刻: 電車遅延のため, 寝坊のため, バス遅延のため
+#   - 公欠: 就職活動のため, 公式大会参加のため, 忌引きのため
+# ==============================================================================
 
 # --- 1. 管理者アカウントの作成 ---
-puts '1. 管理者アカウントを作成中...'
-User.create!(
-  email: 'admin@example.com',
-  password: 'password',
-  password_confirmation: 'password',
-  name: 'システム管理者',
-  role: :admin,
-  # 管理者のため、student_idとenrollment_yearはnil (NULL)
-  student_id: nil,
-  enrollment_year: nil 
-)
-puts '  -> admin@example.com (パスワード: password) 作成完了'
+User.find_or_create_by!(email: 'admin@example.com') do |user|
+  user.password = 'password'
+  user.password_confirmation = 'password'
+  user.name = 'システム管理者'
+  user.role = :admin
+  user.student_id = nil
+  user.enrollment_year = nil
+end
 
 # --- 2. 時間割（Periods）データの作成 ---
-puts '2. 時間割（Periods）データを作成中...'
-
-# 各コマの開始時刻を定義
 PERIOD_TIMES = [
-  { period_number: 1, start_time: '09:30:00' },  # 9:30~11:10
-  { period_number: 2, start_time: '11:20:00' },  # 11:20~13:00
-  { period_number: 3, start_time: '13:45:00' }   # 13:45~15:25
-]
+  { period_number: 1, start_time: '09:30:00' },
+  { period_number: 2, start_time: '11:20:00' },
+  { period_number: 3, start_time: '13:45:00' }
+].freeze
 
-# 月曜(1) 〜 木曜(4): 3コマ
-(1..4).each do |weekday|
-  PERIOD_TIMES.each do |p_data|
-    Period.create!(
+(1..5).each do |weekday| # 1:月曜 〜 5:金曜
+  periods_to_create = PERIOD_TIMES
+
+  # 金曜日(5)は2コマのみ
+  if weekday == 5
+    periods_to_create = PERIOD_TIMES.reject { |p| p[:period_number] == 3 }
+  end
+
+  periods_to_create.each do |p_data|
+    Period.find_or_create_by!(
       period_number: p_data[:period_number],
-      weekday: weekday,
-      start_time: p_data[:start_time]
-    )
+      weekday: weekday
+    ) do |period|
+      period.start_time = p_data[:start_time]
+    end
   end
 end
 
-# 金曜(5): 2コマのみ
-PERIOD_TIMES.take(2).each do |p_data|
-  Period.create!(
-    period_number: p_data[:period_number],
-    weekday: 5,
-    start_time: p_data[:start_time]
-  )
-end
-
-puts "  -> 全#{Period.count}コマの時間割を作成完了"
-
-# --- 3. 大量の学生アカウントを作成 ---
-puts '3. 学生アカウントを作成中...'
-
-# 2024年度入学生30名を作成
-student_names = [
-  '田中太郎', '田中花子', '田中', '田中',
-  '佐藤一郎', '佐藤美咲', '佐藤健太', '佐藤',
-  '鈴木次郎', '鈴木由美', '鈴木大輔', '鈴木',
-  '高橋三郎', '高橋麻衣', '高橋拓也', '高橋',
-  '伊藤四郎', '伊藤愛', '伊藤翔太', '伊藤',
-  '渡辺五郎', '渡辺優子', '渡辺翔', '渡辺',
-  '山本六郎', '山本真由', '山本健', '山本',
-  '中村七郎', '中村彩', '中村', '中村'
-]
+# --- 3. 30人分の学生アカウントの作成 ---
+LAST_NAMES = %w[田中 佐藤 鈴木 高橋 伊藤 渡辺 山本 中村 小林 加藤
+                吉田 山田 松本 井上 木村 林 斎藤 清水 山口 森].freeze
+FIRST_NAMES = %w[太郎 花子 一郎 次郎 三郎 美咲 陽子 健太 大輔 翔太
+                愛 結衣 葵 蓮 悠真 陽菜 凛 樹 湊 朝陽].freeze
 
 students = []
-student_names.each_with_index do |name, index|
-  student = User.create!(
-    email: "student#{index + 1}@example.com",
-    password: 'password',
-    password_confirmation: 'password',
-    name: name,
-    role: :student,
-    student_id: "S2024#{(index + 1).to_s.rjust(4, '0')}",
-    enrollment_year: 2024
-  )
+30.times do |i|
+  student_number = format('%02d', i + 1)
+  enrollment_year = [ 2023, 2024, 2025 ].sample
+  last_name = LAST_NAMES[i % LAST_NAMES.size]
+  first_name = FIRST_NAMES[i % FIRST_NAMES.size]
+
+  student = User.find_or_create_by!(email: "student#{student_number}@example.com") do |user|
+    user.password = 'password'
+    user.password_confirmation = 'password'
+    user.name = "#{last_name}#{first_name}"
+    user.role = :student
+    user.student_id = "S#{enrollment_year}#{student_number}"
+    user.enrollment_year = enrollment_year
+  end
   students << student
 end
 
-puts "  -> #{students.count}名の学生アカウント作成完了"
+# --- 4. 出欠実績（Attendances）の作成 ---
+# 固定日付のマッピング（weekday => date）
+DATES = {
+  1 => Date.new(2025, 12, 1), # 月曜日
+  2 => Date.new(2025, 12, 2), # 火曜日
+  3 => Date.new(2025, 12, 3), # 水曜日
+  5 => Date.new(2025, 12, 5)  # 金曜日
+}.freeze
 
-# --- 4. 大量の出欠実績（Attendances）を作成 ---
-puts '4. 出欠実績を作成中...'
+# 欠席理由
+ABSENT_REASONS = {
+  absent: %w[体調不良のため 通院のため 家庭の事情],
+  late: %w[電車遅延のため 寝坊のため バス遅延のため],
+  officially_absent: %w[就職活動のため 公式大会参加のため 忌引きのため]
+}.freeze
 
-# 2025年10月14日(火)のデータを作成
-target_date = Date.new(2025, 10, 14) # 火曜日
-tue_period = Period.find_by!(weekday: 2, period_number: 1) # 火曜1限
+# 明示的に出欠データを定義
+# [weekday, period_number] => { attended:, absent:, late:, officially_absent: }
+ATTENDANCE_DISTRIBUTION = {
+  # 月曜日
+  [ 1, 1 ] => { attended: 22, absent: 3, late: 3, officially_absent: 2 },
+  [ 1, 2 ] => { attended: 24, absent: 2, late: 2, officially_absent: 2 },
+  [ 1, 3 ] => { attended: 20, absent: 4, late: 4, officially_absent: 2 },
+  # 火曜日
+  [ 2, 1 ] => { attended: 23, absent: 2, late: 3, officially_absent: 2 },
+  [ 2, 2 ] => { attended: 25, absent: 2, late: 2, officially_absent: 1 },
+  [ 2, 3 ] => { attended: 21, absent: 3, late: 4, officially_absent: 2 },
+  # 水曜日
+  [ 3, 1 ] => { attended: 24, absent: 2, late: 2, officially_absent: 2 },
+  [ 3, 2 ] => { attended: 22, absent: 3, late: 3, officially_absent: 2 },
+  [ 3, 3 ] => { attended: 23, absent: 2, late: 3, officially_absent: 2 },
+  # 金曜日（2コマのみ）
+  [ 5, 1 ] => { attended: 25, absent: 2, late: 2, officially_absent: 1 },
+  [ 5, 2 ] => { attended: 23, absent: 3, late: 2, officially_absent: 2 }
+}.freeze
 
-attendance_count = 0
+# 各コマの出欠データを作成
+ATTENDANCE_DISTRIBUTION.each do |(weekday, period_number), distribution|
+  period = Period.find_by!(weekday: weekday, period_number: period_number)
+  date = DATES[weekday]
 
-students.each_with_index do |student, index|
-  # ランダムに欠席者を4名程度作成（indexが3の倍数+1の場合）
-  status = if [1, 7, 15, 23].include?(index)
-    :absent
-  else
-    :attended
+  student_index = 0
+  %i[attended absent late officially_absent].each do |status|
+    distribution[status].times do
+      reason = status == :attended ? nil : ABSENT_REASONS[status].sample
+
+      Attendance.new(
+        user: students[student_index],
+        period: period,
+        date: date,
+        status: status,
+        reason: reason
+      ).save(validate: false)
+
+      student_index += 1
+    end
   end
-
-  attendance = Attendance.new(
-    user: student,
-    period: tue_period,
-    date: target_date,
-    status: status
-  )
-  attendance.save(validate: false)
-  attendance_count += 1
 end
-
-# 追加の出席データ（過去の日付でも数件作成）
-students.sample(10).each do |student|
-  mon_period = Period.find_by!(weekday: 1, period_number: 1)
-  attendance = Attendance.new(
-    user: student,
-    period: mon_period,
-    date: Date.new(2025, 10, 7),
-    status: [:attended, :absent].sample
-  )
-  attendance.save(validate: false)
-  attendance_count += 1
-end
-
-puts "  -> #{attendance_count}件の出欠実績作成完了"
-puts '=================================================='
-puts 'シードデータ投入完了！開発を開始できます。'
-puts '管理者: admin@example.com / 学生: a@student.com (どちらもパスワード: password)'
-puts '=================================================='

@@ -1,8 +1,30 @@
 # Omakase Ruby styling for Rails
 inherit_gem: { rubocop-rails-omakase: rubocop.yml }
 
-# Overwrite or add rules to create your own house style
-#
-# # Use `[a, [b, c]]` not `[ a, [ b, c ] ]`
-# Layout/SpaceInsideArrayLiteralBrackets:
-#   Enabled: false
+AllCops:
+  NewCops: enable
+
+#################### Bundler ###########################
+Bundler:
+  Enabled: true
+
+#################### Lint ###########################
+Lint:
+  Enabled: true
+
+#################### Rails ###########################
+Rails:
+  Enabled: true
+
+Rails/DynamicFindBy: # generate_token_forによる定義される`find_by_token_for`で利用。
+  Enabled: false
+
+Rails/I18nLocaleTexts:
+  Enabled: false
+
+Rails/NotNullColumn:
+  Enabled: false
+
+#################### Security ###########################
+Security:
+  Enabled: true
