@@ -20,7 +20,7 @@ class ApplicationController < ActionController::Base
 
   # Deviseの認証後に呼ばれるメソッド
   def after_sign_in_path_for(resource)
-    if resource.is_admin?
+    if resource.admin?
       # 管理者ログインの成功パス
       admin_root_path
     else

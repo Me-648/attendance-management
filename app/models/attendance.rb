@@ -14,6 +14,11 @@ class Attendance < ApplicationRecord
   # 出席登録可能な時間帯かどうかを検証するカスタムバリデーション
   validate :time_to_attend, on: :create, if: :status_attended?
 
+  # enumの値を日本語に変換する
+  def status_i18n
+    I18n.t("enums.attendance.status.#{status}")
+  end
+
   def time_to_attend
     return if period&.start_time.blank?
 

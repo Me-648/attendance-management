@@ -2,10 +2,18 @@
 
 Rails.application.routes.draw do
   devise_for :users
+
+  # devise_scope を使って、認証関連のルートをカスタマイズします
+  devise_scope :user do
+    # ログアウト後のリダイレクト先をログインページに設定
+    get "users/sign_out" => "devise/sessions#destroy"
+
+    # アプリケーションのルートパス (/) をログインページに設定
+    root "devise/sessions#new"
+  end
   
   # Reveal health status on /up ...
   get "up" => "rails/health#show", as: :rails_health_check
-  get "health" => "rails/health#show", as: :rails_health_check
 
   # =======================================================
   # 管理者専用のルート (ID: 6)
@@ -21,13 +29,11 @@ Rails.application.routes.draw do
   # =======================================================
   # 学生用のルート (ログイン後画面) (ID: 5)
   # =======================================================
-  # resource :student は /student のルートを作成します
-  # [重要] 'resources:' から 'resource :' に修正し、コロンとスペースも修正
-  resource :student, only: [] do 
-     # /student にアクセスしたら attendances#index へ
-     root 'attendances#index', as: 'root'
-
-    # 出欠を登録するためのルート /student/attendances
+  # `/student` というパスのグループを作成します
+  scope '/student', as: 'student' do
+    # /student へのGETリクエストを attendances#index につなぎ、`student_root_path` という名前をつけます
+    root to: 'attendances#index', as: 'root'
+    # /student/attendances へのPOSTリクエストを attendances#create につなぎます
     resources :attendances, only: [:create]
   end
 end

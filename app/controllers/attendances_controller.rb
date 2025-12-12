@@ -49,8 +49,8 @@ class AttendancesController < ApplicationController
 
   # 学生ロールかどうかをチェック
   def check_student_role
-    # is_admin? はUserモデルに実装されている想定
-    if current_user.is_admin?
+    # `admin?` はUserモデルのenumによって自動的に定義されます
+    if current_user.admin?
       redirect_to admin_root_path, alert: "管理者権限ではアクセスできません。"
     end
   end
