@@ -2,30 +2,24 @@
   <h1>出席管理アプリ</h1>
   <%= link_to "ログアウト", destroy_user_session_path, data: { turbo_method: :delete }, class: "logout-btn" %>
 
-  <div class="search-section">
-    <h2>出欠一覧</h2>
-    <%= form_with url: admin_attendance_search_result_path, method: :get, data: { turbo_frame: "attendance_search_result" } do |f| %>
-      <div class="date-inputs">
-        <%= f.number_field :year, placeholder: "年", min: 2000, max: 2100 %>
-        <%= f.number_field :month, placeholder: "月", min: 1, max: 12 %>
-        <%= f.number_field :day, placeholder: "日", min: 1, max: 31 %>
-      </div>
-      <%= f.number_field :enrollment_year, placeholder: "年度入学生", min: 2000, max: 2100 %>
-      <%= f.hidden_field :period, value: "1" %>
-      <%= f.submit "検索", class: "search-btn" %>
-    <% end %>
-  </div>
+  <%= render partial: "attendances/attendance_search_form" %>
 
   <div class="search-section">
     <h2>累計一覧</h2>
-    <%= form_with url: admin_absence_list_path, method: :get do |f| %>
-      <%= f.number_field :enrollment_year, placeholder: "年度入学生", min: 2000, max: 2100 %>
+    <%= form_with url: admin_users_path, method: :get do |f| %>
+      <div class="combobox-wrapper" data-controller="combobox" data-action="click@window->combobox#hide">
+        <%= f.number_field :enrollment_year, placeholder: "年度入学生", autocomplete: "off", class: "input-field input-enrollment", data: { combobox_target: "input", action: "focus->combobox#show" } %>
+        <div class="combobox-dropdown" data-combobox-target="dropdown">
+          <% (2000..Time.current.year).to_a.reverse.each do |y| %>
+            <div class="combobox-option" data-combobox-target="option" data-action="click->combobox#select" data-value="<%= y %>"><%= y %>年度</div>
+          <% end %>
+        </div>
+      </div>
       <%= f.submit "検索", class: "search-btn" %>
     <% end %>
   </div>
 
-  <%= turbo_frame_tag "attendance_search_result" do %>
+  <%= turbo_frame_tag "search_result" do %>
     <!-- 検索結果がここに表示されます -->
   <% end %>
-
 </div>

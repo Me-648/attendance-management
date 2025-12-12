@@ -32,11 +32,7 @@
       </div>
       
       <div class="reason-box">
-        <% if @attendance.reason.present? %>
-          <%= @attendance.reason %>
-        <% else %>
-          <span class="no-reason">理由が登録されていません</span>
-        <% end %>
+        <%= @attendance.reason %>
       </div>
     </div>
 

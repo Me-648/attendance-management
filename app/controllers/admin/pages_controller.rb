@@ -1,5 +1,5 @@
 module Admin
-  class PagesController < ApplicationController
+  class PagesController < BaseController
     def home; end
   end
 end

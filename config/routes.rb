@@ -5,18 +5,17 @@ Rails.application.routes.draw do
   # Reveal health status on /up ...
   get "up" => "rails/health#show", as: :rails_health_check
 
-  # 管理者専用ルート (ID: 6)
+  # 管理者専用ルート
   namespace :admin do
-    root 'pages#home'
-  
-    get 'home', to: 'pages#home'
-  
-    get 'attendance_search_result', to: 'attendances#attendance_search_result'
-    get 'absence_list',            to: 'attendances#absence_list'
-    get 'absence_reason/:id',      to: 'attendances#absence_reason', as: :absence_reason
-    get 'student_total/:id',       to: 'attendances#student_total', as: :student_total
+    root "pages#home"
+
+    get "home", to: "pages#home"
+    resources :users, only: [ :index ]
+    get "attendances/by_period", to: "attendances#by_period"
+    get "attendances/:id/reason", to: "attendances#reason", as: "attendance_reason"
+    get "attendances/:id/total", to: "attendances#total", as: "attendance_total"
   end
-  
+
 
   # 学生用のルート (ID: 5)
   namespace :student do

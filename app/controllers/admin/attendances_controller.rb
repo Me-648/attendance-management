@@ -1,101 +1,36 @@
 module Admin
-  class AttendancesController < ApplicationController
-    before_action :authenticate_user!
-    before_action :check_admin
-
-    def attendance_search_result
+  class AttendancesController < BaseController
+    # 指定された授業回の出席データを表示
+    def by_period
       form_params = {
         year: params[:year],
         month: params[:month],
         day: params[:day],
-        period_number: (params[:period] || "1").to_i,
+        period_number: (params[:period] || 1),
         enrollment_year: params[:enrollment_year]
       }
 
-      @search_form = AttendanceSearchForm.new(form_params)
+      @attendances = AttendanceSearchForm.new(form_params)
 
-      if @search_form.search
-        @students = @search_form.students
-        @attendances = @search_form.attendances
-        @attended_count = @search_form.attended_count
-        @absent_count = @search_form.absent_count
-        @unrecorded_count = @search_form.unrecorded_count
-        @date = @search_form.date
-        @period = @search_form.period
-        @enrollment_year = params[:enrollment_year]
-        @year = params[:year]
-        @month = params[:month]
-        @day = params[:day]
-        @current_period = params[:period] || "1"
-
-        render partial: "attendance_search_result"
+      if @attendances.search
+        render partial: "by_period"
       else
-        flash.now[:alert] = @search_form.errors.full_messages.join("\n")
-        set_empty_results
-        render :attendance_list
+        flash.now[:alert] = @attendances.errors.full_messages.join("\n")
+        redirect_to admin_root_path
       end
     end
 
-    def absence_list
-      @enrollment_year = params[:enrollment_year]
-      @students = User.student.order(:student_id)
-      @students = @students.where(enrollment_year: @enrollment_year) if @enrollment_year.present?
-      @absence_counts = Hash.new(0).merge(Attendance.status_absent.group(:user_id).count)
-    end
-
-    def absence_reason
+    # 欠席理由を表示
+    def reason
       @attendance = Attendance.find(params[:id])
       @student = @attendance.user
       @period = @attendance.period
-
-      unless @attendance.status == "absent"
-        redirect_to admin_root_path, alert: "欠席者のみアクセスできます。"
-      end
-    rescue ActiveRecord::RecordNotFound
-      redirect_to admin_root_path, alert: "出席データが見つかりませんでした。"
     end
 
-    # 累計画面（新規追加）
-    def student_total
-      # 学生情報を取得
+    # 生徒の累計出席情報を表示
+    def total
       @student = User.find(params[:id])
-      # 学生でない場合はエラー
-      unless @student.student?
-        redirect_to admin_root_path, alert: "学生情報が見つかりませんでした。"
-        return
-      end
-
-      # その学生の全出席データを取得
-      attendances = Attendance.where(user_id: @student.id)
-      # 出席数を集計
-      @attended_count = attendances.status_attended.count
-      # 欠席数を集計
-      @absent_count = attendances.status_absent.count
-      # 遅刻数を集計
-      @late_count = attendances.status_late.count
-      # 公欠数を集計
-      @officially_absent_count = attendances.status_officially_absent.count
-      # 合計授業数（出席データがある授業の数）
-      @total_count = attendances.count
-
-    rescue ActiveRecord::RecordNotFound
-      redirect_to admin_root_path, alert: "学生情報が見つかりませんでした。"
-    end
-
-    private
-
-    def set_empty_results
-      @students = []
-      @attendances = {}
-      @absent_count = 0
-      @attended_count = 0
-      @unrecorded_count = 0
-    end
-
-    def check_admin
-      unless current_user&.admin?
-        redirect_to root_path, alert: "管理者権限が必要です。"
-      end
+      @stats = Attendance.stats_for_user(@student.id)
     end
   end
 end

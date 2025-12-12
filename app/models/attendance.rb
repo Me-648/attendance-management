@@ -34,6 +34,18 @@ class Attendance < ApplicationRecord
 
   def status_ja
     # データベースにレコードが存在するが status が nil の場合も考慮
-    STATUS_JA[status] || "未定義" 
+    STATUS_JA[status] || "未定義"
+  end
+
+  # 特定ユーザーのステータス別集計を返す
+  def self.stats_for_user(user_id)
+    counts = where(user_id: user_id).group(:status).count
+    {
+      attended: counts["attended"] || 0,
+      absent: counts["absent"] || 0,
+      late: counts["late"] || 0,
+      officially_absent: counts["officially_absent"] || 0,
+      total: counts.values.sum
+    }
   end
 end
