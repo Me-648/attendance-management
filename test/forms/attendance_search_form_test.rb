@@ -10,6 +10,7 @@ class AttendanceSearchFormTest < ActiveSupport::TestCase
     assert_includes form.errors[:month], "can't be blank"
     assert_includes form.errors[:day], "can't be blank"
     assert_includes form.errors[:period_number], "can't be blank"
+    assert_includes form.errors[:enrollment_year], "can't be blank"
   end
 
   test "無効な日付（2月30日など）はエラー" do
@@ -17,7 +18,8 @@ class AttendanceSearchFormTest < ActiveSupport::TestCase
       year: 2025,
       month: 2,
       day: 30,
-      period_number: 1
+      period_number: 1,
+      enrollment_year: 2024
     )
     assert_not form.valid?
     assert_includes form.errors[:base], "無効な日付です。"
@@ -29,7 +31,8 @@ class AttendanceSearchFormTest < ActiveSupport::TestCase
       year: 2025,
       month: 10,
       day: 19,  # 2025-10-19 は日曜日
-      period_number: 1
+      period_number: 1,
+      enrollment_year: 2024
     )
     assert_not form.valid?
     assert_includes form.errors[:base], "指定された曜日・コマの授業が見つかりませんでした。"
@@ -44,7 +47,8 @@ class AttendanceSearchFormTest < ActiveSupport::TestCase
       year: 2025,
       month: 10,
       day: 20,
-      period_number: 1
+      period_number: 1,
+      enrollment_year: 2024
     )
 
     assert form.search, "検索が成功するべき: #{form.errors.full_messages}"
@@ -57,7 +61,8 @@ class AttendanceSearchFormTest < ActiveSupport::TestCase
       year: 2025,
       month: 10,
       day: 20,
-      period_number: 1
+      period_number: 1,
+      enrollment_year: 2024
     )
 
     form.search
@@ -70,7 +75,8 @@ class AttendanceSearchFormTest < ActiveSupport::TestCase
       year: 2025,
       month: 10,
       day: 20,
-      period_number: 1
+      period_number: 1,
+      enrollment_year: 2024
     )
 
     form.search
@@ -95,7 +101,8 @@ class AttendanceSearchFormTest < ActiveSupport::TestCase
       year: 2025,
       month: 10,
       day: 20,
-      period_number: 1
+      period_number: 1,
+      enrollment_year: 2024
     )
 
     form.search

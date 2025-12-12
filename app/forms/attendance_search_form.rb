@@ -8,7 +8,7 @@ class AttendanceSearchForm
   attribute :period_number, :integer
   attribute :enrollment_year, :integer
 
-  validates :year, :month, :day, :period_number, presence: true
+  validates :year, :month, :day, :period_number, :enrollment_year, presence: true
   validate :validate_date
   validate :validate_period
 
@@ -25,17 +25,17 @@ class AttendanceSearchForm
     @unrecorded_count = 0
   end
 
+  # 出欠データを検索
   def search
     return false unless valid?
 
     # 1. 学生取得
-    student_scope = User.student.order(:student_id)
-    student_scope = student_scope.where(enrollment_year: enrollment_year) if enrollment_year.present?
-    @students = student_scope.to_a
+    @students = User.student.where(enrollment_year: enrollment_year).order(:student_id).to_a
 
-    # 2. 出席データ取得
+    # 2. 出欠データ取得
     if period_number != 0
-      attendances_list = Attendance.where(period_id: @period.id, date: @date).to_a
+      student_ids = @students.map(&:id)
+      attendances_list = Attendance.where(period_id: @period.id, date: @date, user_id: student_ids).to_a
       @attendances = attendances_list.index_by(&:user_id)
 
       # 3. 集計
@@ -43,6 +43,7 @@ class AttendanceSearchForm
       @absent_count = attendances_list.count { |a| a.status == "absent" }
       @unrecorded_count = @students.count - attendances_list.count
     else
+      # 生徒側で検索した場合、全コマ分の出欠データを取得
       @attendances = Attendance.where(user_id: current_user, date: @date).index_by(&:period_id)
     end
 
@@ -63,10 +64,12 @@ class AttendanceSearchForm
   def validate_period
     return unless @date
 
+    return if period_number.to_i == 0
+
     weekday = @date.cwday
     @period = Period.find_by(weekday: weekday, period_number: period_number)
 
-    unless @period && period_number != 0
+    unless @period
       errors.add(:base, "指定された曜日・コマの授業が見つかりませんでした。")
     end
   end
