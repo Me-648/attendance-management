@@ -36,8 +36,8 @@ User.find_or_create_by!(email: 'admin@example.com') do |user|
   user.password_confirmation = 'password'
   user.name = 'システム管理者'
   user.role = :admin
-  user.student_id = nil
-  user.enrollment_year = nil
+  user.student_id = 'admin'
+  user.enrollment_year = 0
 end
 
 # --- 2. 時間割（Periods）データの作成 ---
