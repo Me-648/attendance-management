@@ -1,15 +1,91 @@
-<!-- 出欠一覧セクション -->
-<section class="search-section">
+<!-- 出欠検索フォーム -->
+<div class="search-section">
   <h2 class="section-title">出欠一覧</h2>
-  <%= form_with url: admin_attendance_list_path, method: :get, class: "search-form" do |f| %>
-  <div class="form-row">
-    <%= f.number_field :year, placeholder: "年", class: "input-field input-year", min: 2020, max: 2030 %>
-    <%= f.number_field :month, placeholder: "月", class: "input-field input-month", min: 1, max: 12 %>
-    <%= f.number_field :day, placeholder: "日", class: "input-field input-day", min: 1, max: 31 %>
-  </div>
-  <div class="form-row">
-    <%= f.text_field :enrollment_year, placeholder: "年度入学生", class: "input-field input-enrollment" %>
-    <%= f.submit "検索", class: "btn-search" %>
-  </div>
+  <%= form_with url: attendances_path, method: :get, class: "search-form", data: { turbo_frame: "search_result" } do |f| %>
+    <div class="form-row">
+      <div class="combobox-wrapper" data-controller="combobox" data-action="click@window->combobox#hide">
+        <%= f.number_field :year, value: Time.current.year, placeholder: "年", autocomplete: "off", class: "input-field input-year", data: { combobox_target: "input", action: "focus->combobox#show" } %>
+        <div class="combobox-dropdown" data-combobox-target="dropdown">
+          <% (2000..Time.current.year).to_a.reverse.each do |y| %>
+            <div class="combobox-option" data-combobox-target="option" data-action="click->combobox#select" data-value="<%= y %>"><%= y %>年</div>
+          <% end %>
+        </div>
+      </div>
+
+      <div class="combobox-wrapper" data-controller="combobox" data-action="click@window->combobox#hide">
+        <%= f.number_field :month, value: Time.current.month, placeholder: "月", class: "input-field input-month", autocomplete: "off", data: { combobox_target: "input", action: "focus->combobox#show" } %>
+        <div class="combobox-dropdown" data-combobox-target="dropdown">
+          <% (1..12).each do |m| %>
+            <div class="combobox-option" data-combobox-target="option" data-action="click->combobox#select" data-value="<%= m %>"><%= m %>月</div>
+          <% end %>
+        </div>
+      </div>
+
+      <%= f.number_field :day, value: Time.current.day, placeholder: "日", class: "input-field input-day", min: 1, max: 31 %>
+    </div>
+
+    <div class="form-row">
+      <% if current_user.admin? %>
+        <div class="combobox-wrapper" data-controller="combobox" data-action="click@window->combobox#hide">
+          <%= f.number_field :enrollment_year, placeholder: "年度入学生", class: "input-field input-enrollment", autocomplete: "off", data: { combobox_target: "input", action: "focus->combobox#show" } %>
+          <div class="combobox-dropdown" data-combobox-target="dropdown">
+            <% (2000..Time.current.year).to_a.reverse.each do |y| %>
+              <div class="combobox-option" data-combobox-target="option" data-action="click->combobox#select" data-value="<%= y %>"><%= y %>年度</div>
+            <% end %>
+          </div>
+        </div>
+      <% end %>
+      <%= f.submit "検索", class: "search-btn" %>
+    </div>
+
   <% end %>
-</section>
+</div>
+
+<!-- 以下一時的に使用、後でファイルに移す必要があります -->
+<style>
+.search-section {
+  background: #f5f5f5;
+  padding: 20px;
+  margin: 20px 0;
+  border-radius: 8px;
+}
+
+.search-section h2 {
+  margin-top: 0;
+  margin-bottom: 15px;
+}
+
+.date-inputs {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 10px;
+}
+
+.date-inputs input {
+  flex: 1;
+  padding: 8px;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+}
+
+input[type="number"] {
+  padding: 8px;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  margin-bottom: 10px;
+  width: 200px;
+}
+
+.search-btn {
+  padding: 10px 20px;
+  background-color: #007bff;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.search-btn:hover {
+  background-color: #0056b3;
+}
+</style>
