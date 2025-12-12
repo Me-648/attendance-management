@@ -1,27 +1,18 @@
 class Attendance < ApplicationRecord
   belongs_to :user
   belongs_to :period
- 
-  # statusカラムをenum（列挙型）として定義します。
+
   # attended: 出席, absent: 欠席, late: 遅刻, officially_absent: 公欠
-  # _prefix: true をつけることで、`status_attended?` のようなメソッドが生成され、名前の衝突を防ぎます。
   enum :status, { attended: 0, absent: 1, late: 2, officially_absent: 3 }, prefix: true
- 
+
   # 1人のユーザーは、1つの授業に1回しか出席登録できないようにします。
-  # scopeに :date を追加し、同日の同じ授業への重複登録を防ぎます。
-  validates :user_id, uniqueness: { scope: [:period_id, :date], message: "は既に登録済みです。" }
- 
+  validates :user_id, uniqueness: { scope: [ :period_id, :date ], message: "は既に登録済みです。" }
+
   # 出席登録可能な時間帯かどうかを検証するカスタムバリデーション
   validate :time_to_attend, on: :create, if: :status_attended?
 
-  # enumの値を日本語に変換する
-  def status_i18n
-    I18n.t("enums.attendance.status.#{status}")
-  end
-
   def time_to_attend
     return if period&.start_time.blank?
-
 
     reception_start_time = period.start_time - 5.minutes
     reception_end_time = period.start_time

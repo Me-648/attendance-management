@@ -1,15 +1,23 @@
 # Read about fixtures at https://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
 
-one:
-  date: 2025-10-17
-  status: 1
-  reason: MyText
-  user: one
-  period: one
+taro_monday_first:
+  date: 2025-10-20
+  status: 0
+  reason:
+  user: student_taro
+  period: monday_first
 
-two:
-  date: 2025-10-17
+hanako_monday_first:
+  date: 2025-10-20
+  status: 0
+  reason:
+  user: student_hanako
+  period: monday_first
+
+jiro_monday_first:
+  date: 2025-10-20
   status: 1
-  reason: MyText
-  user: two
-  period: two
+  reason: 体調不良のため
+  user: student_jiro
+  period: monday_first
+  
