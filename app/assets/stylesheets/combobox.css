@@ -1,0 +1,39 @@
+/* カスタムコンボボックス */
+.combobox-wrapper {
+  position: relative;
+  display: inline-block;
+}
+
+.combobox-dropdown {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  background: #fff;
+  border: 1px solid #ddd;
+  z-index: 1000;
+  max-height: 12.5rem;
+  overflow: auto;
+  display: none;
+  min-width: 100%;
+  width: max-content;
+  box-shadow: 0 0.125rem 0.3125rem rgba(0,0,0,0.1);
+}
+
+.combobox-option {
+  padding: 0.5rem 0.75rem;
+  cursor: pointer;
+  white-space: nowrap;
+}
+
+.combobox-option:hover {
+  background: #f0f0f0;
+}
+
+.input-field.input-month {
+  width: 6.25rem;
+}
+
+.input-field.input-year,
+.input-field.input-enrollment {
+  width: 7.5rem;
+}
