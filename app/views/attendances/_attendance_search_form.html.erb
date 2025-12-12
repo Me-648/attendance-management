@@ -4,7 +4,7 @@
   <%= form_with url: attendances_path, method: :get, class: "search-form", data: { turbo_frame: "search_result" } do |f| %>
     <div class="form-row">
       <div class="combobox-wrapper" data-controller="combobox" data-action="click@window->combobox#hide">
-        <%= f.number_field :year, value: Time.current.year, placeholder: "年", autocomplete: "off", class: "input-field input-year", data: { combobox_target: "input", action: "focus->combobox#show" } %>
+        <%= f.number_field :year, value: Time.current.year, min: 2000, max: Time.current.year, placeholder: "年", autocomplete: "off", class: "input-field input-year", data: { combobox_target: "input", action: "focus->combobox#show" } %>
         <div class="combobox-dropdown" data-combobox-target="dropdown">
           <% (2000..Time.current.year).to_a.reverse.each do |y| %>
             <div class="combobox-option" data-combobox-target="option" data-action="click->combobox#select" data-value="<%= y %>"><%= y %>年</div>
@@ -13,21 +13,20 @@
       </div>
 
       <div class="combobox-wrapper" data-controller="combobox" data-action="click@window->combobox#hide">
-        <%= f.number_field :month, value: Time.current.month, placeholder: "月", class: "input-field input-month", autocomplete: "off", data: { combobox_target: "input", action: "focus->combobox#show" } %>
+        <%= f.number_field :month, value: Time.current.month, min: 1, max: 12, placeholder: "月", class: "input-field input-month", autocomplete: "off", data: { combobox_target: "input", action: "focus->combobox#show" } %>
         <div class="combobox-dropdown" data-combobox-target="dropdown">
           <% (1..12).each do |m| %>
             <div class="combobox-option" data-combobox-target="option" data-action="click->combobox#select" data-value="<%= m %>"><%= m %>月</div>
           <% end %>
         </div>
       </div>
-
-      <%= f.number_field :day, value: Time.current.day, placeholder: "日", class: "input-field input-day", min: 1, max: 31 %>
+      <%= f.number_field :day, value: Time.current.day, min: 1, max: 31, placeholder: "日", class: "input-field input-day" %>
     </div>
 
     <div class="form-row">
       <% if current_user.admin? %>
         <div class="combobox-wrapper" data-controller="combobox" data-action="click@window->combobox#hide">
-          <%= f.number_field :enrollment_year, placeholder: "年度入学生", class: "input-field input-enrollment", autocomplete: "off", data: { combobox_target: "input", action: "focus->combobox#show" } %>
+          <%= f.number_field :enrollment_year, min: 2000, max: Time.current.year, placeholder: "年度入学生", class: "input-field input-enrollment", autocomplete: "off", data: { combobox_target: "input", action: "focus->combobox#show" } %>
           <div class="combobox-dropdown" data-combobox-target="dropdown">
             <% (2000..Time.current.year).to_a.reverse.each do |y| %>
               <div class="combobox-option" data-combobox-target="option" data-action="click->combobox#select" data-value="<%= y %>"><%= y %>年度</div>
@@ -37,7 +36,6 @@
       <% end %>
       <%= f.submit "検索", class: "search-btn" %>
     </div>
-
   <% end %>
 </div>
 
