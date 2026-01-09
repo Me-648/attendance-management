@@ -1,0 +1,25 @@
+{
+    "github.copilot.chat.pullRequestDescriptionGeneration.instructions": [
+        { "file": ".github/pull_request_description_instructions.md" }
+    ],
+
+    "[ruby]": {
+        "editor.tabSize": 2,
+    },
+
+    "[erb]": {
+        "editor.tabSize": 2
+    },
+
+    "[js]": {
+        "editor.tabSize": 2
+    },
+
+    "[html]": {
+        "editor.tabSize": 2,
+    },
+
+    "[css]": {
+        "editor.tabSize": 2
+    }
+}
