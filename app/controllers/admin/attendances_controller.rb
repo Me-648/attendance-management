@@ -7,7 +7,8 @@ module Admin
         month: params[:month],
         day: params[:day],
         period_number: (params[:period] || 1),
-        enrollment_year: params[:enrollment_year]
+        enrollment_year: params[:enrollment_year],
+        current_user: current_user
       }
 
       @attendances = AttendanceSearchForm.new(form_params)
@@ -15,7 +16,7 @@ module Admin
       if @attendances.search
         render partial: "by_period"
       else
-        flash.now[:alert] = @attendances.errors.full_messages.join("\n")
+        flash[:alert] = @attendances.errors.full_messages.join("\n")
         redirect_to admin_root_path
       end
     end

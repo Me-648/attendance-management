@@ -2,19 +2,17 @@
   <div class="results-container">
     <div class="results-header">
       <h3><%= @attendances.year %>年<%= @attendances.month %>月<%= @attendances.day %>日 <%= @attendances.period.period_number %>コマ目 <%= @attendances.enrollment_year %>年度入学生</h3>
-      <p>出席：<%= @attendances.attended_count %>名　欠席：<%= @attendances.absent_count %>名</p>
-      <% if @attendances.unrecorded_count > 0 %>
-        <p class="notice">※ <%= @attendances.unrecorded_count %>名の出席データが未記録です</p>
+      <% stats = attendance_stats(@attendances) %>
+      <p>出席：<%= stats[:attended] %>名　欠席：<%= stats[:absent] %>名</p>
+      <% if stats[:unrecorded] > 0 %>
+        <p class="notice">※ <%= stats[:unrecorded] %>名の出席データが未記録です</p>
       <% end %>
     </div>
   
     <div class="period-buttons">
     
-    <%# 年月日から曜日を求める %>
-    <% date = Date.new(@attendances.year.to_i, @attendances.month.to_i, @attendances.day.to_i) %>
-  
     <%# 金曜 (wday = 5) は2コマ、それ以外は3コマ %>
-    <% max_period = (date.wday == 5 ? 2 : 3) %>
+    <% max_period = (@attendances.date.wday == 5 ? 2 : 3) %>
   
     <%# 1〜max_period までボタン生成 %>
     <% (1..max_period).each do |period_num| %>
@@ -26,8 +24,8 @@
           enrollment_year: @attendances.enrollment_year,
           period: period_num
         ),
-        class: "period-btn #{@attendances.period_number.to_i == period_num ? 'active' : ''}",
-        data: { turbo_frame: "attendance_by_period" } %>
+        class: "period-btn #{@attendances.period_number == period_num ? 'active' : ''}",
+        data: { turbo_frame: "search_result" } %>
       <% end %>
     </div>
   
