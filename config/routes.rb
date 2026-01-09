@@ -16,7 +16,6 @@ Rails.application.routes.draw do
     get "attendances/:id/total", to: "attendances#total", as: "attendance_total"
   end
 
-
   # 学生用のルート (ID: 5)
   namespace :student do
     root "attendances#index"

@@ -27,14 +27,16 @@ class UserTest < ActiveSupport::TestCase
     assert_includes user.errors[:enrollment_year], "can't be blank"
   end
 
-  test "管理者は student_id が不要" do
+  test "管理者も student_id と enrollment_year が必須" do
     user = User.new(
       name: "テスト管理者",
       role: :admin,
       email: "admin_test@example.com",
       password: "password123"
     )
-    assert user.valid?, "管理者は student_id なしで有効であるべき: #{user.errors.full_messages}"
+    assert_not user.valid?
+    assert_includes user.errors[:student_id], "can't be blank"
+    assert_includes user.errors[:enrollment_year], "can't be blank"
   end
 
   test "student_id は一意でなければならない" do
