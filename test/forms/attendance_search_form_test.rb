@@ -112,4 +112,34 @@ class AttendanceSearchFormTest < ActiveSupport::TestCase
     assert form.search, "検索が成功するべき: #{form.errors.full_messages}"
     assert_not_empty form.attendances
   end
+
+  test "生徒ユーザーは period_number と enrollment_year が指定されていなくても有効" do
+    form = AttendanceSearchForm.new(
+      year: 2025,
+      month: 10,
+      day: 20,
+      current_user: users(:student_taro)
+    )
+    assert form.valid?, "生徒なら period_number 等がなくても有効であるべき: #{form.errors.full_messages}"
+  end
+
+  test "生徒ユーザーでの検索結果が正しいこと" do
+    student = users(:student_taro)
+    form = AttendanceSearchForm.new(
+      year: 2025,
+      month: 10,
+      day: 20,
+      current_user: student
+    )
+
+    assert form.search
+    assert_empty form.students, "生徒検索では students は空であるべき"
+    # period_id をキーにしたハッシュになっているか確認
+    assert_kind_of Hash, form.attendances
+
+    # 自分のデータのみが含まれているか確認
+    form.attendances.values.each do |attendance|
+      assert_equal student.id, attendance.user_id
+    end
+  end
 end
