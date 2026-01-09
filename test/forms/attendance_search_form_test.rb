@@ -4,12 +4,13 @@ class AttendanceSearchFormTest < ActiveSupport::TestCase
   # ===== バリデーションテスト =====
 
   test "必須項目が空の場合は無効" do
-    form = AttendanceSearchForm.new
+    form = AttendanceSearchForm.new(current_user: users(:admin_user))
     assert_not form.valid?
     assert_includes form.errors[:year], "can't be blank"
     assert_includes form.errors[:month], "can't be blank"
     assert_includes form.errors[:day], "can't be blank"
     assert_includes form.errors[:period_number], "can't be blank"
+    assert_includes form.errors[:enrollment_year], "can't be blank"
   end
 
   test "無効な日付（2月30日など）はエラー" do
@@ -17,7 +18,9 @@ class AttendanceSearchFormTest < ActiveSupport::TestCase
       year: 2025,
       month: 2,
       day: 30,
-      period_number: 1
+      period_number: 1,
+      enrollment_year: 2024,
+      current_user: users(:admin_user)
     )
     assert_not form.valid?
     assert_includes form.errors[:base], "無効な日付です。"
@@ -29,7 +32,9 @@ class AttendanceSearchFormTest < ActiveSupport::TestCase
       year: 2025,
       month: 10,
       day: 19,  # 2025-10-19 は日曜日
-      period_number: 1
+      period_number: 1,
+      enrollment_year: 2024,
+      current_user: users(:admin_user)
     )
     assert_not form.valid?
     assert_includes form.errors[:base], "指定された曜日・コマの授業が見つかりませんでした。"
@@ -44,7 +49,9 @@ class AttendanceSearchFormTest < ActiveSupport::TestCase
       year: 2025,
       month: 10,
       day: 20,
-      period_number: 1
+      period_number: 1,
+      enrollment_year: 2024,
+      current_user: users(:admin_user)
     )
 
     assert form.search, "検索が成功するべき: #{form.errors.full_messages}"
@@ -57,7 +64,9 @@ class AttendanceSearchFormTest < ActiveSupport::TestCase
       year: 2025,
       month: 10,
       day: 20,
-      period_number: 1
+      period_number: 1,
+      enrollment_year: 2024,
+      current_user: users(:admin_user)
     )
 
     form.search
@@ -70,7 +79,9 @@ class AttendanceSearchFormTest < ActiveSupport::TestCase
       year: 2025,
       month: 10,
       day: 20,
-      period_number: 1
+      period_number: 1,
+      enrollment_year: 2024,
+      current_user: users(:admin_user)
     )
 
     form.search
@@ -83,29 +94,52 @@ class AttendanceSearchFormTest < ActiveSupport::TestCase
       month: 10,
       day: 20,
       period_number: 1,
-      enrollment_year: 2024
+      enrollment_year: 2024,
+      current_user: users(:admin_user)
     )
 
     form.search
     assert form.students.all? { |s| s.enrollment_year == 2024 }, "指定した入学年度の学生のみ取得されるべき"
   end
 
-  test "出席・欠席・未記録のカウントが正しい" do
+  test "生徒では自分の全出欠が取得できる" do
     form = AttendanceSearchForm.new(
       year: 2025,
       month: 10,
       day: 20,
-      period_number: 1
+      current_user: users(:student_taro)
+    )
+    assert form.search, "検索が成功するべき: #{form.errors.full_messages}"
+    assert_not_empty form.attendances
+  end
+
+  test "生徒ユーザーは period_number と enrollment_year が指定されていなくても有効" do
+    form = AttendanceSearchForm.new(
+      year: 2025,
+      month: 10,
+      day: 20,
+      current_user: users(:student_taro)
+    )
+    assert form.valid?, "生徒なら period_number 等がなくても有効であるべき: #{form.errors.full_messages}"
+  end
+
+  test "生徒ユーザーでの検索結果が正しいこと" do
+    student = users(:student_taro)
+    form = AttendanceSearchForm.new(
+      year: 2025,
+      month: 10,
+      day: 20,
+      current_user: student
     )
 
-    form.search
+    assert form.search
+    assert_empty form.students, "生徒検索では students は空であるべき"
+    # period_id をキーにしたハッシュになっているか確認
+    assert_kind_of Hash, form.attendances
 
-    # fixtures の設定:
-    # - taro: attended (status: 0)
-    # - hanako: attended (status: 0)
-    # - jiro: absent (status: 1)
-    assert_operator form.attended_count, :>=, 0
-    assert_operator form.absent_count, :>=, 0
-    assert_operator form.unrecorded_count, :>=, 0
+    # 自分のデータのみが含まれているか確認
+    form.attendances.values.each do |attendance|
+      assert_equal student.id, attendance.user_id
+    end
   end
 end

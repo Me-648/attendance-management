@@ -8,48 +8,56 @@ class AttendanceSearchForm
   attribute :period_number, :integer
   attribute :enrollment_year, :integer
 
-  validates :year, :month, :day, :period_number, presence: true
-  validate :validate_date
-  validate :validate_period
+  attr_reader :current_user
 
-  # 未記録数を追加
-  attr_reader :date, :period, :students, :attendances,
-              :attended_count, :absent_count, :unrecorded_count
+  validates :year, :month, :day, presence: true
+  validate :validate_current_user, :validate_date
+
+  with_options if: :admin? do
+    validates :period_number, presence: true
+    validates :enrollment_year, presence: true
+    validate :validate_period
+  end
+
+  attr_reader :date, :period, :students, :attendances
 
   def initialize(attributes = {})
+    @current_user = attributes.delete(:current_user) || attributes.delete("current_user")
     super
     @students = []
     @attendances = {}
-    @attended_count = 0
-    @absent_count = 0
-    @unrecorded_count = 0
   end
 
+  # 出欠データを検索
   def search
     return false unless valid?
 
-    # 1. 学生取得
-    student_scope = User.student.order(:student_id)
-    student_scope = student_scope.where(enrollment_year: enrollment_year) if enrollment_year.present?
-    @students = student_scope.to_a
+    if current_user&.admin?
+      @students = User.student.where(enrollment_year: enrollment_year).order(:student_id).to_a
 
-    # 2. 出席データ取得
-    if period_number != 0
-      attendances_list = Attendance.where(period_id: @period.id, date: @date).to_a
-      @attendances = attendances_list.index_by(&:user_id)
-
-      # 3. 集計
-      @attended_count = attendances_list.count { |a| a.status == "attended" }
-      @absent_count = attendances_list.count { |a| a.status == "absent" }
-      @unrecorded_count = @students.count - attendances_list.count
+      student_ids = @students.map(&:id)
+      attendances = Attendance.where(period_id: @period.id, date: @date, user_id: student_ids).to_a
+      @attendances = attendances.index_by(&:user_id)
     else
-      @attendances = Attendance.where(user_id: current_user, date: @date).index_by(&:period_id)
+      # 生徒の場合は自分の全出欠を取得
+      @attendances = current_user.attendances.where(date: @date.all_month).index_by(&:period_id)
+      @students = []
     end
 
     true
   end
 
   private
+
+  def admin?
+    current_user&.admin?
+  end
+
+  def validate_current_user
+    return if current_user.present?
+
+    errors.add(:base, "ユーザー情報が取得できませんでした。")
+  end
 
   def validate_date
     return if year.blank? || month.blank? || day.blank?
@@ -66,7 +74,7 @@ class AttendanceSearchForm
     weekday = @date.cwday
     @period = Period.find_by(weekday: weekday, period_number: period_number)
 
-    unless @period && period_number != 0
+    unless @period
       errors.add(:base, "指定された曜日・コマの授業が見つかりませんでした。")
     end
   end

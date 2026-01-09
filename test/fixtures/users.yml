@@ -4,8 +4,8 @@
 admin_user:
   name: 管理者
   role: 1
-  student_id:
-  enrollment_year:
+  student_id: admin
+  enrollment_year: 0
   email: admin@example.com
   encrypted_password: <%= Devise::Encryptor.digest(User, 'password123') %>
 
