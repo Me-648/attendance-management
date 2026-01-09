@@ -24,4 +24,16 @@ class Attendance < ApplicationRecord
       errors.add(:base, "この授業の出席受付は終了しました。")
     end
   end
+
+  # 特定ユーザーのステータス別集計を返す
+  def self.stats_for_user(user_id)
+    counts = where(user_id: user_id).group(:status).count
+    {
+      attended: counts["attended"] || 0,
+      absent: counts["absent"] || 0,
+      late: counts["late"] || 0,
+      officially_absent: counts["officially_absent"] || 0,
+      total: counts.values.sum
+    }
+  end
 end
