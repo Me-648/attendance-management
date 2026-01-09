@@ -25,18 +25,6 @@ class Attendance < ApplicationRecord
     end
   end
 
-  STATUS_JA = {
-    "attended"          => "出席",
-    "absent"            => "欠席",
-    "late"              => "遅刻",
-    "officially_absent" => "公欠"
-  }.freeze
-
-  def status_ja
-    # データベースにレコードが存在するが status が nil の場合も考慮
-    STATUS_JA[status] || "未定義"
-  end
-
   # 特定ユーザーのステータス別集計を返す
   def self.stats_for_user(user_id)
     counts = where(user_id: user_id).group(:status).count
