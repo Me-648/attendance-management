@@ -43,6 +43,9 @@ gem "thruster", require: false
 # ユーザー認証機能
 gem "devise"
 
+# Deviseの多言語対応
+gem "devise-i18n"
+
 # CSSフレームワーク
 gem "tailwindcss-rails", "~> 4.4"
 
