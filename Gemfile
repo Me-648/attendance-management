@@ -43,6 +43,12 @@ gem "thruster", require: false
 # ユーザー認証機能
 gem "devise"
 
+# Deviseの多言語対応
+gem "devise-i18n"
+
+# CSSフレームワーク
+gem "tailwindcss-rails", "~> 4.4"
+
 group :development, :test do
   # See https://guides.rubyonrails.org/debugging_rails_applications.html#debugging-with-the-debug-gem
   gem "debug", platforms: %i[ mri windows ], require: "debug/prelude"
