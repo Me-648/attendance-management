@@ -12,7 +12,7 @@ class UserTest < ActiveSupport::TestCase
       enrollment_year: 2024
     )
     assert_not user.valid?
-    assert_includes user.errors[:student_id], "can't be blank"
+    assert user.errors.added?(:student_id, :blank)
   end
 
   test "学生は enrollment_year が必須" do
@@ -24,19 +24,31 @@ class UserTest < ActiveSupport::TestCase
       student_id: "S9999999"
     )
     assert_not user.valid?
-    assert_includes user.errors[:enrollment_year], "can't be blank"
+    assert user.errors.added?(:enrollment_year, :blank)
   end
 
-  test "管理者も student_id と enrollment_year が必須" do
+  test "管理者は student_id が必須" do
     user = User.new(
       name: "テスト管理者",
       role: :admin,
       email: "admin_test@example.com",
-      password: "password123"
+      password: "password123",
+      enrollment_year: 2024
     )
     assert_not user.valid?
-    assert_includes user.errors[:student_id], "can't be blank"
-    assert_includes user.errors[:enrollment_year], "can't be blank"
+    assert user.errors.added?(:student_id, :blank)
+  end
+
+  test "管理者は enrollment_year が必須" do
+    user = User.new(
+      name: "テスト管理者",
+      role: :admin,
+      email: "admin_test@example.com",
+      password: "password123",
+      student_id: "A9999999"
+    )
+    assert_not user.valid?
+    assert user.errors.added?(:enrollment_year, :blank)
   end
 
   test "student_id は一意でなければならない" do
@@ -50,7 +62,7 @@ class UserTest < ActiveSupport::TestCase
       enrollment_year: 2024
     )
     assert_not user.valid?
-    assert_includes user.errors[:student_id], "has already been taken"
+    assert user.errors.added?(:student_id, :taken, value: existing_user.student_id)
   end
 
   test "email は一意でなければならない" do
@@ -64,7 +76,7 @@ class UserTest < ActiveSupport::TestCase
       enrollment_year: 2024
     )
     assert_not user.valid?
-    assert_includes user.errors[:email], "has already been taken"
+    assert user.errors.added?(:email, :taken, value: existing_user.email)
   end
 
   # ===== enum テスト =====
