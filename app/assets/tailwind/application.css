@@ -2,6 +2,7 @@
 
 @import "./components/combobox.css";
 @import "./components/modal.css";
+@import "./components/attendance.css";
 
 @theme {
   /* Attendance Status Colors */
