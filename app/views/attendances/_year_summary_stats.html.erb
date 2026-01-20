@@ -1,0 +1,37 @@
+<div class="bg-white shadow rounded-lg p-6 h-full border border-gray-100">
+  <h3 class="text-md font-bold mb-6 text-gray-800">年間出席状況</h3>
+  <div class="space-y-4">
+    <!-- 各項目 -->
+    <div class="flex justify-between items-center border-b border-gray-100 pb-3">
+      <span class="text-gray-600 font-medium">総授業日数：</span>
+      <span class="bg-gray-100 text-gray-800 px-3 py-1 rounded font-medium"><%= stats[:total] %>日</span>
+    </div>
+    
+    <div class="flex justify-between items-center border-b border-gray-100 pb-3">
+      <span class="text-gray-600 font-medium">出席日数：</span>
+      <span class="bg-attended text-white px-3 py-1 rounded font-medium"><%= stats[:attended] %>日</span>
+    </div>
+
+    <div class="flex justify-between items-center border-b border-gray-100 pb-3">
+      <span class="text-gray-600 font-medium">欠席日数：</span>
+      <span class="bg-absent text-white px-3 py-1 rounded font-medium"><%= stats[:absent] %>日</span>
+    </div>
+
+    <div class="flex justify-between items-center border-b border-gray-100 pb-3">
+      <span class="text-gray-600 font-medium">遅刻日数：</span>
+      <span class="bg-late text-white px-3 py-1 rounded font-medium"><%= stats[:late] %>日</span>
+    </div>
+
+    <div class="flex justify-between items-center border-b border-gray-100 pb-3">
+      <span class="text-gray-600 font-medium">公欠日数：</span>
+      <span class="bg-officially-absent text-white px-3 py-1 rounded font-medium"><%= stats[:officially_absent] %>日</span>
+    </div>
+
+    <div class="flex justify-between items-center pt-4">
+      <span class="text-gray-600 font-medium">出席率：</span>
+      <span class="font-bold text-lg text-gray-800">
+        <%= number_to_percentage(stats[:total] > 0 ? (stats[:attended].to_f / stats[:total] * 100) : 0, precision: 1) %>
+      </span>
+    </div>
+  </div>
+</div>
