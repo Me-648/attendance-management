@@ -1,0 +1,23 @@
+@layer components {
+  /* カスタムコンボボックス */
+  .combobox-wrapper {
+    @apply relative inline-block;
+  }
+
+  .combobox-dropdown {
+    @apply absolute top-full left-0 bg-white border border-gray-200 z-[1000] max-h-50 overflow-auto hidden min-w-full w-max shadow-sm;
+  }
+
+  .combobox-option {
+    @apply px-3 py-2 cursor-pointer whitespace-nowrap hover:bg-gray-100;
+  }
+
+  .input-field.input-month {
+    @apply w-25;
+  }
+
+  .input-field.input-year,
+  .input-field.input-enrollment {
+    @apply w-30;
+  }
+}
