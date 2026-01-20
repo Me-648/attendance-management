@@ -14,13 +14,26 @@ class Attendance < ApplicationRecord
   def time_to_attend
     return if period&.start_time.blank?
 
-    reception_start_time = period.start_time - 5.minutes
-    reception_end_time = period.start_time
+    # DBのstart_timeは日付が2000年1月1日になっているため、出席対象の日付に合わせる
+    target_date = self.date || Date.current
+    start_time_on_date = Time.zone.local(
+      target_date.year,
+      target_date.month,
+      target_date.day,
+      period.start_time.hour,
+      period.start_time.min,
+      period.start_time.sec
+    )
 
-    # 現在時刻が、授業開始時刻の5分前より前の場合
-    if Time.current < reception_start_time
+    reception_start_time = start_time_on_date - 5.minutes
+    reception_end_time = start_time_on_date
+
+    # 現在時刻と比較
+    current_time = Time.current
+
+    if current_time < reception_start_time
       errors.add(:base, "出席の受付は授業開始5分前からです。")
-    elsif Time.current > reception_end_time
+    elsif current_time > reception_end_time
       errors.add(:base, "この授業の出席受付は終了しました。")
     end
   end
