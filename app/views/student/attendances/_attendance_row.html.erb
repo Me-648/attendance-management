@@ -1,0 +1,38 @@
+<%= turbo_frame_tag "attendance_period_#{period.id}" do %>
+  <div class="flex flex-col md:flex-row items-center border rounded-lg p-4 gap-4 bg-white hover:bg-gray-50 transition-colors duration-150">
+    <!-- 時限ラベル -->
+    <div class="w-full md:w-24 text-center font-medium text-gray-700 p-2 border-b md:border-b-0 md:border-r border-gray-100 shrink-0">
+      <%= period.period_number %>コマ目
+    </div>
+
+    <!-- ステータスボタン群 -->
+    <div class="flex-1 grid grid-cols-2 md:grid-cols-4 gap-3 w-full">
+      <% # 現在のステータス %>
+      <% current_status = attendance&.status %>
+      
+      <!-- 出席ボタン: 特別扱い (直接POST/PATCH) -->
+      <!-- 受付時間外かつ未出席の場合は無効化 -->
+      <% if attendance_disabled?(period, :attended) && current_status != 'attended' %>
+        <button type="button" disabled class="<%= attendance_status_classes(false, :attended, false) %> opacity-50 cursor-not-allowed">
+          出席
+        </button>
+      <% else %>
+        <%= button_to "出席", attendance&.persisted? ? student_attendance_path(attendance) : student_attendances_path, 
+              method: attendance&.persisted? ? :patch : :post,
+              params: { attendance: { period_id: period.id, status: :attended } },
+              class: attendance_status_classes(current_status == 'attended', :attended, true),
+              disabled: (current_status == 'attended')
+        %>
+      <% end %>
+
+      <!-- その他のボタン: モーダルを開く -->
+      <% [:absent, :late, :officially_absent].each do |status| %>
+        <%= link_to attendance_label(status),
+              form_student_attendances_path(period_id: period.id, status: status),
+              class: attendance_status_classes(current_status == status.to_s, status),
+              data: { turbo_frame: "modal" }
+        %>
+      <% end %>
+    </div>
+  </div>
+<% end %>

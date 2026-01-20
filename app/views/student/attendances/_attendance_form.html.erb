@@ -1,0 +1,12 @@
+<div class="bg-white shadow rounded-lg p-6 mb-8 border border-gray-100">
+  <h2 class="text-lg font-bold mb-6 text-gray-800">本日の出席登録 - <%= l(Date.current, format: :long) %></h2>
+  <% if periods.empty? %>
+    <p class="text-gray-500">本日の授業はありません。</p>
+  <% else %>
+    <div class="space-y-4">
+      <% periods.each do |period| %>
+        <%= render "attendance_row", period: period, attendance: today_attendances[period.id] %>
+      <% end %>
+    </div>
+  <% end %>
+</div>
