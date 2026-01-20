@@ -1,6 +1,7 @@
 @import "tailwindcss";
 
 @import "./components/combobox.css";
+@import "./components/modal.css";
 
 @theme {
   /* Attendance Status Colors */

@@ -1,0 +1,22 @@
+@layer components {
+  /* モーダル */
+  .modal__backdrop {
+    @apply fixed inset-0 bg-black/50 z-40 transition-opacity duration-300;
+  }
+
+  .modal__container {
+    @apply flex items-center justify-center min-h-screen p-4 fixed inset-0 z-50 pointer-events-none;
+  }
+
+  .modal__content {
+    @apply bg-white rounded-lg shadow-xl w-full max-w-md relative pointer-events-auto transform scale-95 opacity-0 transition-all duration-200 ease-out;
+  }
+
+  .modal__content--visible {
+    @apply scale-100 opacity-100;
+  }
+
+  .modal__close {
+    @apply absolute top-4 right-4 text-gray-400 cursor-pointer hover:text-gray-500;
+  }
+}
