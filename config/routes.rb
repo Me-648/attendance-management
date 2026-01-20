@@ -13,6 +13,14 @@ Rails.application.routes.draw do
   # 学生用のルート (ID: 5)
   namespace :student do
     root "attendances#index"
-    resources :attendances
+    resources :attendances do
+      get :form, on: :collection
+    end
+
+    if Rails.env.development?
+      namespace :development do
+        post "time_travel", to: "time_travel#update", as: :time_travel
+      end
+    end
   end
 end
