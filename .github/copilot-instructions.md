@@ -24,6 +24,6 @@
 - **フレームワーク**: Ruby on Rails 8.1.1
 - **データベース**: SQLite3
 - **フロントエンド**: Hotwire
-- **スタイリング**: Tailwind CSS
+- **スタイリング**: Tailwind CSS V4
 - **認証**: Devise
 - **リンター/フォーマッター**: RuboCop
