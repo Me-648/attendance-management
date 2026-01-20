@@ -23,8 +23,16 @@
   </head>
 
   <body>
+    <div id="flash-messages" class="fixed top-5 right-5 z-50 flex flex-col items-end w-full max-w-sm pointer-events-none *:pointer-events-auto">
+      <% flash.each do |key, value| %>
+        <%= render partial: "components/flash_message", locals: { type: key, message: value } %>
+      <% end %>
+    </div>
+
     <main class="container mx-auto mt-28 px-5 flex">
       <%= yield %>
     </main>
+
+    <%= turbo_frame_tag "modal" %>
   </body>
 </html>
