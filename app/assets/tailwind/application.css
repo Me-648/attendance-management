@@ -1,10 +1,14 @@
 @import "tailwindcss";
 
+@import url('https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@100..900&family=Source+Sans+3:ital,wght@0,200..900;1,200..900&display=swap');
+
 @import "./components/combobox.css";
 @import "./components/modal.css";
 @import "./components/attendance.css";
 
 @theme {
+  --font-body: "Source Sans 3", sans-serif, "Noto Sans JP", sans-serif;
+
   /* Attendance Status Colors */
   --color-attended: #99b83c; /* green-500 */
   --color-attended-dark: #80a022; /* green-600 */
@@ -30,4 +34,7 @@
   /* Theme Backgrounds */
   --color-body: #E0CBA9;
   --color-container: #F9EDDF;
+
+  --color-brown: #69412B;
+  --color-ivory: #FDFBF7;
 }

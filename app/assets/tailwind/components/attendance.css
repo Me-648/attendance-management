@@ -1,7 +1,7 @@
 @layer components {
   /* Attendance Status Buttons (Structure Only) */
   .attendance-status {
-    @apply block w-full px-4 py-2 rounded-lg border text-sm font-medium transition-colors text-center;
+    @apply block w-full px-2.5 py-2 rounded-lg border text-xs font-medium transition-colors text-center leading-tight whitespace-normal break-keep;
   }
 
   /* Badge Style (Small) for Monthly View (Structure Only) */
