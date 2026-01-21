@@ -1,1 +1,39 @@
 @import "tailwindcss";
+
+@import url('https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@100..900&family=Source+Sans+3:ital,wght@0,200..900;1,200..900&display=swap');
+
+@import "./components/combobox.css";
+@import "./components/modal.css";
+
+@theme {
+  --font-body: "Source Sans 3", sans-serif, "Noto Sans JP", sans-serif;
+
+  /* Attendance Status Colors */
+  --color-attended: #99b83c; /* green-500 */
+  --color-attended-dark: #80a022; /* green-600 */
+  --color-attended-bg: #ffffb7; /* green-50 */
+
+  --color-absent: #e26c52; /* red-500 */
+  --color-absent-dark: #c6543d; /* red-600 */
+  --color-absent-bg: #ffe9c7; /* red-50 */
+
+  --color-late: #fad85d; /* orange-500 */
+  --color-late-dark: #dfbf44; /* orange-600 */
+  --color-late-bg: #ffffda; /* orange-50 */
+
+  --color-officially-absent: #3b82f6; /* blue-500 */
+  --color-officially-absent-dark: #006cdc; /* blue-600 */
+  --color-officially-absent-bg: #d1fcff; /* blue-50 */
+
+  --color-neutral: #dedfc7; /* gray-500 */
+  --color-neutral-dark: #c5c6ae; /* gray-600 */
+  --color-neutral-bg: #ffffff; /* gray-50 */
+  --color-neutral-border: #fffffa; /* gray-300 */
+
+  /* Theme Backgrounds */
+  --color-body: #E0CBA9;
+  --color-container: #F9EDDF;
+
+  --color-brown: #69412B;
+  --color-ivory: #FDFBF7;
+}

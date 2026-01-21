@@ -1,0 +1,47 @@
+<%= turbo_frame_tag "modal" do %>
+  <div class="modal__backdrop" data-controller="modal">
+    <!-- Overlay -->
+    <div class="fixed inset-0" data-action="click->modal#closeBackground"></div>
+
+    <div class="modal__container">
+      <div class="modal__content p-6 sm:p-7 relative bg-container border border-[#d7c3a3] shadow-[0_8px_20px_rgba(0,0,0,0.12)]" data-modal-target="content">
+        
+        <!-- Close Button (Icon) -->
+        <button type="button" class="modal__close text-[#7b6a54] hover:text-[#5f5140]" data-action="modal#close">
+          <span class="sr-only">閉じる</span>
+          <svg class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+          </svg>
+        </button>
+
+        <h3 class="text-lg font-bold text-[#3f3528] mb-1">理由詳細</h3>
+        
+        <!-- 日付・コマ -->
+        <p class="text-sm text-[#6b5d4b] mb-4 font-medium">
+            <%= l(attendance.date, format: "%Y/%m/%d") %> - <%= attendance.period.period_number %>コマ
+        </p>
+
+        <!-- 出席状況 -->
+        <div class="mb-5">
+          <p class="text-sm font-medium text-[#5a4e3d] mb-2">出席状況</p>
+          <span class="<%= attendance_badge_classes(attendance.status) %>">
+            <%= attendance_label(attendance.status) %>
+          </span>
+        </div>
+
+        <!-- 理由 -->
+        <div class="mb-7">
+          <p class="text-sm font-medium text-[#5a4e3d] mb-2">理由</p>
+          <div class="w-full text-sm border border-[#cdbba3] rounded-md  bg-[#C7BCAB] p-3 min-h-[5rem] text-[#4a3f32]">
+            <%= simple_format(h(attendance.reason.presence || "理由の記載はありません"), class: "m-0") %>
+          </div>
+        </div>
+
+        <!-- Confirm Button (Close) -->
+        <div class="flex justify-end">
+          <button type="button" class="bg-[#d0c1ad] text-[#4a3f32] px-6 py-2 rounded-md border border-[#bfae95] hover:bg-[#c4b39b] font-semibold transition-colors" data-action="modal#close">閉じる</button>
+        </div>
+      </div>
+    </div>
+  </div>
+<% end %>
