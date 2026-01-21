@@ -1,0 +1,36 @@
+<section class="admin-panel">
+  <div class="admin-section-title">
+    <% if @enrollment_year.present? %>
+      <%= @enrollment_year %>年度入学生
+    <% else %>
+      累計一覧
+    <% end %>
+  </div>
+
+  <div class="admin-table-wrap">
+    <table class="admin-table">
+      <thead>
+        <tr>
+          <th>学籍番号</th>
+          <th>氏名</th>
+        </tr>
+      </thead>
+      <tbody>
+        <% @students.each do |student| %>
+          <tr class="admin-table-row">
+            <td>
+              <%= link_to student.student_id, admin_attendance_total_path(student.id), class: "admin-table-link" %>
+            </td>
+            <td>
+              <%= link_to student.name, admin_attendance_total_path(student.id), class: "admin-table-link" %>
+            </td>
+          </tr>
+        <% end %>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="admin-back-link">
+    <%= link_to "← 戻る", admin_root_path, class: "admin-back-link__button" %>
+  </div>
+</section>

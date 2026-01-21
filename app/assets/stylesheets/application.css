@@ -4,7 +4,465 @@
  * With Propshaft, assets are served efficiently without preprocessing steps. You can still include
  * application-wide styles in this file, but keep in mind that CSS precedence will follow the standard
  * cascading order, meaning styles declared later in the document or manifest will override earlier ones,
- * depending on specificity.
- *
- * Consider organizing styles into separate files for maintainability.
- */
+  background: #d0d0d0;
+}
+
+.period-btn.active {
+  background: #4CAF50;
+  color: white;
+  font-weight: bold;
+}
+
+/* Attendance Grid */
+.attendance-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+  gap: 10px;
+  margin-top: 20px;
+}
+
+.student-card {
+  padding: 15px;
+  border: 2px solid #ddd;
+  border-radius: 4px;
+  text-align: center;
+  font-weight: 500;
+  background: white;
+}
+
+.student-card.attended {
+  background-color: #fff;
+  border-color: #4CAF50;
+}
+
+.student-card.absent {
+  background-color: #f44336;
+  color: white;
+  border-color: #d32f2f;
+}
+
+.student-card.late {
+  background-color: #ff9800;
+  color: white;
+  border-color: #f57c00;
+}
+
+.student-card.officially_absent {
+  background-color: #2196F3;
+  color: white;
+  border-color: #1976D2;
+}
+
+.student-card.unrecorded {
+  background-color: #e0e0e0;
+  color: #666;
+  border-color: #bdbdbd;
+}
+
+/* Admin layout */
+.admin-body {
+  background: #e7d4b5;
+  color: #4b3a2f;
+  min-height: 100vh;
+}
+
+.admin-topbar {
+  background: #6b3f2b;
+  color: #f8f1e7;
+  box-shadow: 0 6px 0 rgba(255, 255, 255, 0.08) inset;
+}
+
+.admin-topbar__inner {
+  max-width: 1100px;
+  margin: 0 auto;
+  padding: 16px 24px;
+  display: flex;
+  align-items: center;
+  gap: 24px;
+  flex-wrap: wrap;
+  row-gap: 12px;
+}
+
+.admin-brand {
+  font-size: 20px;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  white-space: nowrap;
+  writing-mode: horizontal-tb;
+  text-orientation: mixed;
+  flex-shrink: 0;
+}
+
+.admin-nav {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+
+.admin-nav-link {
+  color: #f8f1e7;
+  text-decoration: none;
+  padding: 6px 0;
+  opacity: 0.78;
+  border-bottom: 3px solid transparent;
+  font-weight: 600;
+  writing-mode: horizontal-tb;
+  text-orientation: mixed;
+}
+
+.admin-nav-link:hover {
+  opacity: 1;
+}
+
+.admin-nav-link.active {
+  opacity: 1;
+  border-color: #f8f1e7;
+}
+
+.admin-header-actions {
+  margin-left: auto;
+  flex: 1 1 auto;
+}
+
+.admin-search {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 10px;
+  background: #f6ecdd;
+  border-radius: 999px;
+  border: 1px solid #dcc6a7;
+  flex-wrap: nowrap;
+}
+
+.admin-search__input {
+  background: transparent;
+  border: none;
+  outline: none;
+  color: #5a4336;
+  width: 90px;
+  font-size: 14px;
+}
+
+.admin-search__select {
+  background: transparent;
+  border: none;
+  color: #5a4336;
+  font-size: 14px;
+  padding: 2px 4px;
+  outline: none;
+}
+
+.admin-search__input--sm {
+  width: 60px;
+}
+
+.admin-search__input--lg {
+  width: 130px;
+}
+
+.admin-search__button {
+  background: #f2e3cf;
+  border: 1px solid #d3b493;
+  color: #5a4336;
+  border-radius: 999px;
+  padding: 4px 14px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.admin-search__button:hover {
+  background: #edd8bf;
+}
+
+.admin-logout__link {
+  color: #f8f1e7;
+  text-decoration: none;
+  font-size: 14px;
+  margin-left: 8px;
+  opacity: 0.9;
+  white-space: nowrap;
+  writing-mode: horizontal-tb;
+  text-orientation: mixed;
+  flex-shrink: 0;
+}
+
+.admin-logout__link:hover {
+  opacity: 1;
+}
+
+.admin-main {
+  max-width: 1100px;
+  margin: 24px auto 40px;
+  padding: 0 24px 32px;
+}
+
+.admin-home {
+  min-height: 200px;
+}
+
+.admin-placeholder {
+  background: #f6ecdd;
+  border: 2px dashed #c8a883;
+  border-radius: 16px;
+  padding: 28px;
+  text-align: center;
+  color: #7b5d45;
+}
+
+.admin-panel {
+  background: #f8f1e7;
+  border-radius: 16px;
+  padding: 24px;
+  box-shadow: 0 6px 0 rgba(107, 63, 43, 0.2);
+}
+
+.admin-panel--narrow {
+  max-width: 640px;
+}
+
+.admin-panel__title {
+  font-size: 18px;
+  font-weight: 700;
+  margin: 24px 0 16px;
+  color: #5a4336;
+}
+
+.admin-section-title {
+  font-size: 18px;
+  font-weight: 700;
+  margin-bottom: 16px;
+}
+
+.admin-table-wrap {
+  background: #fdf7ee;
+  border-radius: 12px;
+  overflow: hidden;
+  border: 2px solid #6b3f2b;
+}
+
+.admin-table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.admin-table th {
+  background: #6b3f2b;
+  color: #f8f1e7;
+  padding: 12px 16px;
+  font-weight: 700;
+  text-align: center;
+}
+
+.admin-table td {
+  padding: 12px 16px;
+  text-align: center;
+  border-top: 1px solid #d6c1a3;
+  background: #fff7eb;
+}
+
+.admin-table-row:hover td {
+  background: #f3e4cf;
+}
+
+.admin-table-link {
+  color: #5a4336;
+  text-decoration: none;
+  display: block;
+}
+
+.admin-back-link {
+  margin-top: 20px;
+  text-align: center;
+}
+
+.admin-back-link__button {
+  display: inline-block;
+  padding: 10px 24px;
+  background: #6b3f2b;
+  color: #f8f1e7;
+  border-radius: 999px;
+  text-decoration: none;
+  font-weight: 600;
+}
+
+.admin-card {
+  background: #fff6ea;
+  border: 2px solid #6b3f2b;
+  border-radius: 12px;
+  padding: 16px 20px;
+}
+
+.admin-card__row {
+  display: flex;
+  justify-content: space-between;
+  padding: 6px 0;
+  font-weight: 600;
+}
+
+.admin-card__label {
+  color: #7b5d45;
+}
+
+.admin-card__value {
+  color: #4b3a2f;
+}
+
+.admin-stats {
+  border: 2px solid #6b3f2b;
+  border-radius: 12px;
+  background: #fff6ea;
+  padding: 16px 20px;
+  display: grid;
+  gap: 12px;
+}
+
+.admin-stat {
+  display: flex;
+  justify-content: space-between;
+  padding-bottom: 10px;
+  border-bottom: 1px solid #c8a883;
+}
+
+.admin-stat:last-child {
+  border-bottom: none;
+  padding-bottom: 0;
+}
+
+.admin-stat__value {
+  font-weight: 700;
+}
+
+.admin-stat--strong {
+  font-size: 16px;
+}
+
+.admin-detail {
+  border: 2px solid #6b3f2b;
+  border-radius: 12px;
+  background: #fff6ea;
+  padding: 16px 20px;
+}
+
+.admin-detail__row {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 12px;
+}
+
+.admin-detail__label {
+  font-weight: 600;
+}
+
+.admin-reason-box {
+  background: #fffefb;
+  border: 1px solid #c8a883;
+  border-radius: 10px;
+  padding: 16px;
+  min-height: 120px;
+  line-height: 1.7;
+}
+
+/* Admin by_period */
+.admin-results {
+  background: #fffaf2;
+  border-radius: 16px;
+  padding: 24px;
+  box-shadow: 0 4px 0 rgba(107, 63, 43, 0.12);
+  border: 1px solid #d9c2a4;
+}
+
+.admin-results__header {
+  border-bottom: 2px solid #e6d7c4;
+  padding-bottom: 16px;
+}
+
+.admin-results__title {
+  font-size: 18px;
+  margin: 0 0 8px;
+  color: #4b3a2f;
+}
+
+.admin-results__summary {
+  margin: 0;
+  color: #6b4d3a;
+  font-weight: 600;
+}
+
+.admin-results__notice {
+  margin: 8px 0 0;
+  color: #a66a3b;
+  font-weight: 600;
+}
+
+.admin-periods {
+  display: flex;
+  gap: 12px;
+  margin: 18px 0 12px;
+}
+
+.admin-period {
+  background: #e3e1df;
+  color: #6b4d3a;
+  padding: 8px 18px;
+  border-radius: 8px;
+  text-decoration: none;
+  font-weight: 700;
+  border: 1px solid transparent;
+}
+
+.admin-period.active {
+  background: #4caf50;
+  color: #fff;
+  border-color: #3f8e43;
+}
+
+.admin-attendance-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+  gap: 12px;
+  margin-top: 8px;
+}
+
+.admin-attendance-card {
+  background: #fff;
+  border: 2px solid #66b96b;
+  border-radius: 6px;
+  padding: 10px 8px;
+  text-align: center;
+  font-weight: 700;
+  color: #4b3a2f;
+}
+
+.admin-attendance-card__link,
+.admin-attendance-card__name {
+  display: block;
+  color: inherit;
+  text-decoration: none;
+}
+
+.admin-attendance-card.absent {
+  background: #f44336;
+  border-color: #d6382f;
+  color: #fff;
+}
+
+.admin-attendance-card.late {
+  background: #ff9800;
+  border-color: #e58900;
+  color: #fff;
+}
+
+.admin-attendance-card.officially_absent {
+  background: #2196f3;
+  border-color: #1976d2;
+  color: #fff;
+}
+
+.admin-attendance-card.unrecorded {
+  background: #cfd5dc;
+  border-color: #a9b0b7;
+  color: #4b3a2f;
+}

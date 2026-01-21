@@ -1,0 +1,32 @@
+<section class="admin-panel admin-panel--narrow">
+  <div class="admin-card">
+    <div class="admin-card__row">
+      <span class="admin-card__label">学籍番号</span>
+      <span class="admin-card__value"><%= @student.student_id %></span>
+    </div>
+    <div class="admin-card__row">
+      <span class="admin-card__label">氏名</span>
+      <span class="admin-card__value"><%= @student.name %></span>
+    </div>
+  </div>
+
+  <div class="admin-panel__title">欠席理由</div>
+
+  <div class="admin-detail">
+    <div class="admin-detail__row">
+      <span class="admin-detail__label">日付</span>
+      <span class="admin-detail__value"><%= @attendance.date.strftime("%Y年%m月%d日") %></span>
+    </div>
+    <div class="admin-detail__row">
+      <span class="admin-detail__label">曜日・コマ</span>
+      <span class="admin-detail__value"><%= @period.weekday_ja %>曜日 <%= @period.period_number %>コマ</span>
+    </div>
+    <div class="admin-reason-box">
+      <%= @attendance.reason.presence || "理由が登録されていません" %>
+    </div>
+  </div>
+
+  <div class="admin-back-link">
+    <%= link_to "← 戻る", :back, class: "admin-back-link__button" %>
+  </div>
+</section>

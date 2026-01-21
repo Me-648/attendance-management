@@ -1,0 +1,50 @@
+<section class="admin-panel admin-panel--narrow">
+  <div class="admin-card">
+    <div class="admin-card__row">
+      <span class="admin-card__label">学籍番号</span>
+      <span class="admin-card__value"><%= @student.student_id %></span>
+    </div>
+    <div class="admin-card__row">
+      <span class="admin-card__label">氏名</span>
+      <span class="admin-card__value"><%= @student.name %></span>
+    </div>
+  </div>
+
+  <div class="admin-panel__title">年間出席状況</div>
+
+  <div class="admin-stats">
+    <div class="admin-stat">
+      <span>総授業日数</span>
+      <span class="admin-stat__value"><%= @stats[:total] %>回</span>
+    </div>
+    <div class="admin-stat">
+      <span>出席日数</span>
+      <span class="admin-stat__value"><%= @stats[:attended] %>回</span>
+    </div>
+    <div class="admin-stat">
+      <span>欠席日数</span>
+      <span class="admin-stat__value"><%= @stats[:absent] %>回</span>
+    </div>
+    <div class="admin-stat">
+      <span>遅刻日数</span>
+      <span class="admin-stat__value"><%= @stats[:late] %>回</span>
+    </div>
+    <div class="admin-stat">
+      <span>公欠日数</span>
+      <span class="admin-stat__value"><%= @stats[:officially_absent] %>回</span>
+    </div>
+    <div class="admin-stat admin-stat--strong">
+      <span>出席率</span>
+      <span class="admin-stat__value">
+        <% if @stats[:total] > 0 %>
+          <%= number_to_percentage((@stats[:attended].to_f / @stats[:total] * 100), precision: 1) %>
+        <% else %>
+          0%
+        <% end %>
+      </span>
+    </div>
+  </div>
+
+  <div class="admin-back-link">
+    <%= link_to "← 戻る", :back, class: "admin-back-link__button" %>
+</section>
