@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title><%= content_for(:title) || "Attendance Management" %></title>
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="mobile-web-app-capable" content="yes">
+    <%= csrf_meta_tags %>
+    <%= csp_meta_tag %>
+
+    <%= yield :head %>
+
+    <link rel="icon" href="/icon.png" type="image/png">
+    <link rel="icon" href="/icon.svg" type="image/svg+xml">
+    <link rel="apple-touch-icon" href="/icon.png">
+
+    <%= stylesheet_link_tag :app, "data-turbo-track": "reload" %>
+    <%= javascript_importmap_tags %>
+  </head>
+
+  <body class="admin-body">
+    <div id="flash-messages" class="fixed top-5 right-5 z-50 flex flex-col items-end w-full max-w-sm pointer-events-none *:pointer-events-auto">
+      <% flash.each do |key, value| %>
+        <%= render partial: "components/flash_message", locals: { type: key, message: value } %>
+      <% end %>
+    </div>
+
+    <header class="w-full bg-[#6b3f2b] text-[#f8f1e7]">
+      <div class="w-full px-6 py-4 flex items-center gap-6 flex-nowrap">
+        <div class="text-lg font-bold tracking-wider whitespace-nowrap shrink-0">出席管理アプリ</div>
+        <nav class="flex items-center gap-6 whitespace-nowrap shrink-0">
+          <%= link_to "出欠一覧", admin_root_path, class: "text-sm font-semibold opacity-80 hover:opacity-100 border-b-2 pb-1 #{current_page?(admin_root_path) ? 'border-[#f8f1e7] opacity-100' : 'border-transparent'}" %>
+          <%= link_to "累計一覧", admin_users_path(enrollment_year: params[:enrollment_year].presence || Time.current.year), class: "text-sm font-semibold opacity-80 hover:opacity-100 border-b-2 pb-1 #{controller_name == 'users' ? 'border-[#f8f1e7] opacity-100' : 'border-transparent'}" %>
+        </nav>
+
+        <div class="flex-1 flex justify-end min-w-0">
+          <% if controller_name == "pages" && action_name == "home" %>
+            <%= form_with url: admin_attendances_by_period_path, method: :get, class: "flex items-center gap-2 bg-[#f6ecdd] border border-[#dcc6a7] rounded-full px-3 py-2", data: { turbo_frame: "search_result" } do |f| %>
+              <%= f.number_field :year, value: params[:year].presence || Time.current.year, min: 2000, max: Time.current.year, class: "bg-transparent border-0 outline-none text-[#5a4336] w-24 text-sm", placeholder: "年" %>
+              <%= f.number_field :month, value: params[:month].presence || Time.current.month, min: 1, max: 12, class: "bg-transparent border-0 outline-none text-[#5a4336] w-16 text-sm", placeholder: "月" %>
+              <%= f.number_field :day, value: params[:day].presence || Time.current.day, min: 1, max: 31, class: "bg-transparent border-0 outline-none text-[#5a4336] w-16 text-sm", placeholder: "日" %>
+              <%= f.select :enrollment_year,
+                           options_for_select((2000..Time.current.year).to_a.reverse.map { |y| ["#{y}年度", y] }, params[:enrollment_year].presence || Time.current.year),
+                           {},
+                           class: "bg-transparent border-0 text-[#5a4336] text-sm w-36" %>
+              <%= f.submit "検索", class: "bg-[#f2e3cf] border border-[#d3b493] text-[#5a4336] rounded-full px-4 py-1 text-sm font-semibold hover:bg-[#edd8bf]" %>
+            <% end %>
+          <% elsif controller_name == "users" %>
+            <%= form_with url: admin_users_path, method: :get, class: "flex items-center gap-2 bg-[#f6ecdd] border border-[#dcc6a7] rounded-full px-3 py-2" do |f| %>
+              <%= f.select :enrollment_year,
+                           options_for_select((2000..Time.current.year).to_a.reverse.map { |y| ["#{y}年度", y] }, params[:enrollment_year].presence || Time.current.year),
+                           {},
+                           class: "bg-transparent border-0 text-[#5a4336] text-sm w-36" %>
+              <%= f.submit "検索", class: "bg-[#f2e3cf] border border-[#d3b493] text-[#5a4336] rounded-full px-4 py-1 text-sm font-semibold hover:bg-[#edd8bf]" %>
+            <% end %>
+          <% end %>
+        </div>
+
+        <div class="whitespace-nowrap shrink-0">
+          <%= link_to "ログアウト", destroy_user_session_path, data: { turbo_method: :delete }, class: "text-sm opacity-90 hover:opacity-100" %>
+        </div>
+      </div>
+    </header>
+
+    <main class="admin-main">
+      <%= yield %>
+    </main>
+
+    <%= turbo_frame_tag "modal" %>
+  </body>
+</html>

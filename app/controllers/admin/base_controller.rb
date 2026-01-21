@@ -1,6 +1,7 @@
 module Admin
   class BaseController < ApplicationController
     before_action :authenticate_admin!
+    layout "admin"
 
     private
     # 管理者認証メソッド
