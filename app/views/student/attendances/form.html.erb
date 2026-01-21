@@ -4,18 +4,18 @@
     <div class="fixed inset-0" data-action="click->modal#closeBackground"></div>
 
     <div class="modal__container">
-      <div class="modal__content p-6 relative" data-modal-target="content">
+      <div class="modal__content p-6 sm:p-7 relative bg-container border border-[#d7c3a3] shadow-[0_8px_20px_rgba(0,0,0,0.12)]" data-modal-target="content">
         
         <!-- Close Button -->
-        <button type="button" class="modal__close" data-action="modal#close">
+        <button type="button" class="modal__close text-[#7b6a54] hover:text-[#5f5140]" data-action="modal#close">
           <span class="sr-only">閉じる</span>
           <svg class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
           </svg>
         </button>
 
-        <h3 class="text-xl font-bold text-gray-900 mb-2">理由入力</h3>
-        <p class="text-sm text-gray-500 mb-6 font-medium">出席状況の理由を入力してください。</p>
+        <h3 class="text-lg font-bold text-[#3f3528] mb-1">理由入力</h3>
+        <p class="text-sm text-[#6b5d4b] mb-4">出席状況の理由を入力してください。</p>
 
         <%= form_with model: @attendance, 
                       url: @attendance.persisted? ? student_attendance_path(@attendance) : student_attendances_path, 
@@ -27,20 +27,20 @@
           
           <div class="mb-4">
             <%= f.text_area :reason, rows: 4, 
-                class: "shadow-sm focus:ring-1 focus:ring-blue-500 focus:border-blue-500 block w-full text-base border-gray-300 rounded-lg bg-gray-50 p-3 resize-none", 
+                class: "block w-full text-sm border border-[#cdbba3] rounded-md bg-[#C7BCAB] p-3 resize-none text-[#4a3f32] placeholder:text-[#8a7b67] focus:ring-2 focus:ring-[#b49a78] focus:border-[#b49a78]", 
                 placeholder: "理由を入力してください..." %>
           </div>
 
-          <div class="flex items-center mb-6">
+          <div class="flex items-center mb-5">
             <%= check_box_tag :apply_to_all, "1", false, 
-                class: "h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded",
+                class: "h-4 w-4 text-[#7e6b54] focus:ring-[#b49a78] border-[#cdbba3] rounded bg-[#C7BCAB]",
                 id: "apply_to_all_modal" %>
-            <%= label_tag "apply_to_all_modal", "すべてのコマに適用", class: "ml-2 block text-sm text-gray-700 cursor-pointer select-none" %>
+            <%= label_tag "apply_to_all_modal", "すべてのコマに適用", class: "ml-2 block text-sm text-[#6b5d4b] cursor-pointer select-none" %>
           </div>
 
-          <div class="flex justify-end gap-3">
-             <button type="button" class="text-gray-500 hover:text-gray-700 px-4 py-2" data-action="modal#close">キャンセル</button>
-             <%= f.submit "保存", class: "bg-gray-900 text-white px-6 py-2 rounded-lg hover:bg-gray-800 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-900 font-medium transition-colors w-24" %>
+            <div class="flex justify-end gap-3">
+              <button type="button" class="text-[#7b6a54] hover:text-[#5f5140] px-4 py-2" data-action="modal#close">キャンセル</button>
+              <%= f.submit "保存", class: "bg-[#d0c1ad] text-[#4a3f32] px-6 py-2 rounded-md border border-[#bfae95] hover:bg-[#c4b39b] focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#b49a78] font-semibold transition-colors w-24" %>
           </div>
         <% end %>
       </div>

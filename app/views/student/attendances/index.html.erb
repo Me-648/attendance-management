@@ -16,46 +16,54 @@
   </div>
 <% end %>
 
-<div class="container mx-auto px-4 py-8 max-w-7xl" 
+<div class="min-h-screen bg-body pt-8 pb-24 w-full flex justify-center">
+    <div class="w-full max-w-5xl" 
       data-controller="tabs attendance-modal"
-      data-tabs-default-tab-value="register">
+      data-tabs-default-tab-value="register"
+      data-tabs-active-class="text-brown font-bold"
+      data-tabs-inactive-class="text-brown opacity-70">
 
-  <!-- Mobile Tabs (md以上で非表示) -->
-  <div class="md:hidden border-b border-gray-200 mb-6 sticky top-0 bg-white z-10">
-    <nav class="-mb-px flex space-x-8" aria-label="Tabs">
-      <a href="#" class="whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm transition-colors duration-200"
-          data-tabs-target="tab" 
-          data-action="tabs#switch" 
-          data-tab-id="register">
-        出席登録 & 累計
-      </a>
-      <a href="#" class="whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm transition-colors duration-200"
-          data-tabs-target="tab" 
-          data-action="tabs#switch" 
-          data-tab-id="history">
-        月別一覧
-      </a>
-    </nav>
-  </div>
-
-  <div class="space-y-8">
-    <!-- 上段: 本日の出席登録 -->
-    <!-- Mobile: "register" タブの時だけ表示 (md:block でPC時強制表示) -->
-    <div data-tabs-target="panel" data-tab-id="register" class="md:block">
-      <%= render "attendance_form", periods: @facade.periods, today_attendances: @facade.today_attendances %>
+    <!-- Mobile Tabs (md以上で非表示) -->
+    <div class="md:hidden fixed bottom-0 left-0 right-0 bg-brown px-2 py-2 z-50 text-sm">
+      <nav class="flex justify-around w-full items-center gap-4" aria-label="Tabs">
+        <a href="#" class="flex-1 text-center py-3 px-4 rounded-full transition-all duration-200 flex items-center justify-center gap-2 bg-ivory"
+            data-tabs-target="tab" 
+            data-action="tabs#switch" 
+            data-tab-id="register">
+          <span class="text-sm whitespace-nowrap">出席登録</span>
+          <%= image_tag "paw.svg", class: "w-4 h-4 hidden", data: { tabs_target: "icon" } %>
+        </a>
+        <a href="#" class="flex-1 text-center py-3 px-4 rounded-full transition-all duration-200 flex items-center justify-center gap-2 bg-ivory"
+            data-tabs-target="tab" 
+            data-action="tabs#switch" 
+            data-tab-id="history">
+          <span class="text-sm whitespace-nowrap">累計一覧</span>
+          <%= image_tag "paw.svg", class: "w-4 h-4 hidden", data: { tabs_target: "icon" } %>
+        </a>
+      </nav>
     </div>
 
-    <div class="grid grid-cols-1 md:grid-cols-2 gap-8 items-start">
-      <!-- 下段左: 年間累計 -->
-      <!-- Mobile: "register" タブの時だけ表示 (md:block でPC時強制表示) -->
-      <div data-tabs-target="panel" data-tab-id="register" class="md:block h-full">
-        <%= render "attendances/year_summary_stats", stats: @facade.stats %>
+    <!-- 管理者用へボタン (左下・固定) -->
+    <div class="fixed bottom-24 left-4 md:hidden z-0">
+      <%= link_to "管理者用へ", "#", class: "bg-[#D1D5DB] text-[#4B5563] text-xs px-4 py-2 rounded-full shadow-sm font-bold opacity-90 hover:opacity-100 transition-opacity" %>
+    </div>
+
+    <div class="space-y-8">
+      <!-- 上段: 本日の出席登録 -->
+      <div data-tabs-target="panel" data-tab-id="register" class="md:block">
+        <%= render "attendance_form", periods: @facade.periods, today_attendances: @facade.today_attendances %>
       </div>
 
-      <!-- 下段右: 出席一覧 -->
-      <!-- Mobile: "history" タブの時だけ表示 (md:block でPC時強制表示) -->
-      <div data-tabs-target="panel" data-tab-id="history" class="hidden md:block h-full">
-        <%= render "monthly_attendance_history", facade: @facade %>
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-8 items-start">
+        <!-- 下段左: 年間累計 -->
+        <div data-tabs-target="panel" data-tab-id="register" class="md:block h-full">
+          <%= render "attendances/year_summary_stats", stats: @facade.stats %>
+        </div>
+
+        <!-- 下段右: 出席一覧 -->
+        <div data-tabs-target="panel" data-tab-id="history" class="hidden md:block h-full">
+          <%= render "monthly_attendance_history", facade: @facade %>
+        </div>
       </div>
     </div>
   </div>

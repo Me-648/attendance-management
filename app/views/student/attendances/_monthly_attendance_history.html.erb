@@ -1,67 +1,64 @@
-<div class="bg-white shadow rounded-lg p-6 h-full border border-gray-100">
+<div class="bg-container shadow rounded-lg p-6 h-full border-none">
   <div class="flex flex-col sm:flex-row justify-between items-center mb-6 gap-4">
     <h3 class="text-md font-bold text-gray-800">出席一覧</h3>
     
     <!-- 検索フォーム (GET) -->
-    <%= form_with url: student_attendances_path, method: :get, class: "flex items-center space-x-2 text-sm bg-gray-50 p-2 rounded-lg" do |f| %>
-      <%= f.select :year, (Date.current.year-1..Date.current.year+1).to_a, { selected: facade.year }, class: "w-auto min-w-[5rem] px-2 py-1 text-sm border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500 bg-white cursor-pointer" %>
+    <%= form_with url: student_attendances_path, method: :get, class: "flex items-center space-x-2 text-sm bg-container p-0" do |f| %>
+      <%= f.select :year, (Date.current.year-1..Date.current.year+1).to_a, { selected: facade.year }, class: "w-auto min-w-[5rem] px-2 py-1 text-sm bg-[#C4C4C4] rounded text-gray-700 font-medium border-none focus:ring-brown cursor-pointer" %>
       <span class="text-gray-600">年</span>
       
-      <%= f.select :month, (1..12).to_a, { selected: facade.month }, class: "w-auto min-w-[4rem] px-2 py-1 text-sm border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500 bg-white cursor-pointer" %>
+      <%= f.select :month, (1..12).to_a, { selected: facade.month }, class: "w-auto min-w-[3rem] px-2 py-1 text-sm bg-[#C4C4C4] rounded text-gray-700 font-medium border-none focus:ring-brown cursor-pointer" %>
       <span class="text-gray-600">月</span>
       
-      <%= f.submit "検索", class: "ml-2 bg-gray-600 text-white px-4 py-1.5 rounded-md hover:bg-gray-700 cursor-pointer transition-colors text-xs font-bold uppercase tracking-wider" %>
+      <%= f.submit "検索", class: "ml-2 bg-[#C4C4C4] text-gray-700 px-4 py-1.5 rounded hover:bg-gray-400 cursor-pointer transition-colors text-sm font-medium" %>
     <% end %>
   </div>
 
-  <div class="overflow-x-auto rounded-lg border border-gray-200">
+  <div class="overflow-x-auto rounded border border-brown">
     <table class="w-full text-sm text-center border-collapse">
-      <thead class="bg-gray-50 text-gray-700 font-medium">
+      <thead class="bg-brown text-white font-bold">
         <tr>
-          <th class="border-b border-gray-200 p-3 whitespace-nowrap min-w-[100px]">日付</th>
-          <% (1..3).each do |num| # 画像に合わせて3コマ分表示するが、実際はfacadeから取得 %>
-            <th class="border-b border-gray-200 p-3 whitespace-nowrap min-w-[80px]"><%= num %>コマ</th>
+          <th class="border-b border-white/20 p-3 whitespace-nowrap min-w-[100px] border-r border-white/20 last:border-r-0">日付</th>
+          <% (1..3).each do |num| %>
+            <th class="border-b border-white/20 p-3 whitespace-nowrap min-w-[80px] border-r border-white/20 last:border-r-0"><%= num %>コマ</th>
           <% end %>
         </tr>
       </thead>
-      <tbody class="divide-y divide-gray-200 bg-white">
+      <tbody class="divide-y divide-brown bg-container">
         <% if facade.monthly_attendances.present? %>
-          <% facade.monthly_attendances.each do |date, daily_data| %>
-            <tr class="hover:bg-gray-50 transition-colors">
-              <td class="p-3 text-gray-600 font-medium whitespace-nowrap"><%= l(date, format: "%Y/%m/%d") %></td>
+          <% facade.monthly_attendances.each_with_index do |(date, daily_data), index| %>
+            <tr class="<%= index.even? ? 'bg-brand-ivory' : 'bg-container' %> transition-colors border-b border-brown last:border-b-0">
+              <td class="p-3 text-gray-700 font-medium whitespace-nowrap border-r border-brown"><%= l(date, format: "%Y/%m/%d") %></td>
               <% (1..3).each do |num| %>
-                <td class="p-3">
+                <td class="p-3 border-r border-brown last:border-r-0">
                   <% att = daily_data[num] %>
                   <% if att %>
                     <% 
-                      # バッジスタイルの定義 (BEMクラス使用)
+                      # バッジ形式 (画像に合わせてシンプル化も検討)
                       status_sym = att.status.to_sym
-                      badge_classes = "attendance-badge"
+                      base_classes = "inline-block px-3 py-1 rounded text-white font-medium text-xs w-[60px]"
                       
-                      case status_sym
-                      when :attended
-                        badge_classes += " text-attended-dark border-attended-dark bg-attended-bg"
-                      when :absent
-                        badge_classes += " bg-absent text-white border-absent"
-                      when :late
-                        badge_classes += " text-late-dark border-late-dark bg-late-bg"
-                      when :officially_absent
-                        badge_classes += " text-officially-absent-dark border-officially-absent-dark bg-officially-absent-bg"
+                      badge_class = case status_sym
+                      when :attended then "bg-attended"
+                      when :absent then "bg-absent"
+                      when :late then "bg-late" # late text is usually darker, but image shows yellow/orange bg
+                      when :officially_absent then "bg-officially-absent"
+                      else "bg-gray-400"
                       end
                     %>
 
                     <% if status_sym == :attended %>
-                      <span class="<%= badge_classes %>">
+                      <span class="<%= base_classes %> <%= badge_class %>">
                         <%= attendance_label(att.status) %>
                       </span>
                     <% else %>
                       <%= link_to attendance_label(att.status), student_attendance_path(att),
-                          class: "#{badge_classes} hover:opacity-75 transition-opacity cursor-pointer block",
+                          class: "#{base_classes} #{badge_class} hover:opacity-75 transition-opacity cursor-pointer block mx-auto",
                           data: { turbo_frame: "modal" }
                       %>
                     <% end %>
                   <% else %>
-                    <span class="attendance-badge text-neutral border-neutral-border">-</span>
+                    <span class="text-gray-400">-</span>
                   <% end %>
                 </td>
               <% end %>

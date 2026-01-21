@@ -1,13 +1,12 @@
 import { Controller } from "@hotwired/stimulus"
 
 export default class extends Controller {
-  static targets = ["tab", "panel"]
+  static targets = ["tab", "panel", "icon"]
   static values = { defaultTab: String }
+  static classes = [ "active", "inactive" ]
 
   connect() {
     // 初期タブの表示
-    // スマホ画面のみタブ機能が必要だが、ロジック自体は単純に動作させておく
-    // CSS (md:block) でPC側の強制表示を行う前提
     if (this.defaultTabValue) {
       this.showTab(this.defaultTabValue)
     }
@@ -21,13 +20,35 @@ export default class extends Controller {
 
   showTab(tabId) {
     // タブのアクティブ装飾
-    this.tabTargets.forEach(tab => {
-      if (tab.dataset.tabId === tabId) {
-        tab.classList.add("border-blue-500", "text-blue-600")
-        tab.classList.remove("border-transparent", "text-gray-500", "hover:text-gray-700", "hover:border-gray-300")
+    this.tabTargets.forEach((tab, index) => {
+      const isActive = tab.dataset.tabId === tabId
+
+      // アイコンの表示制御
+      // タブとアイコンの並び順が一致していると仮定(indexでアクセス)
+      // または tab要素内に icon要素があると仮定して検索する方が堅牢
+      // ここでは、tab要素のスコープ内のiconを探す方式で実装
+      const icon = tab.querySelector('[data-tabs-target="icon"]')
+
+      // classes APIが定義されていればそれを使用、なければデフォルト
+      if (this.hasActiveClass && this.hasInactiveClass) {
+        if (isActive) {
+          tab.classList.add(...this.activeClasses)
+          tab.classList.remove(...this.inactiveClasses)
+          if (icon) icon.classList.remove("hidden")
+        } else {
+          tab.classList.remove(...this.activeClasses)
+          tab.classList.add(...this.inactiveClasses)
+          if (icon) icon.classList.add("hidden")
+        }
       } else {
-        tab.classList.remove("border-blue-500", "text-blue-600")
-        tab.classList.add("border-transparent", "text-gray-500", "hover:text-gray-700", "hover:border-gray-300")
+        // Fallback or legacy styles
+        if (isActive) {
+          tab.classList.add("border-blue-500", "text-blue-600")
+          tab.classList.remove("border-transparent", "text-gray-500", "hover:text-gray-700", "hover:border-gray-300")
+        } else {
+          tab.classList.remove("border-blue-500", "text-blue-600")
+          tab.classList.add("border-transparent", "text-gray-500", "hover:text-gray-700", "hover:border-gray-300")
+        }
       }
     })
 

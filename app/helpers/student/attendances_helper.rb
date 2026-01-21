@@ -37,7 +37,7 @@ module Student
                               "hover:bg-neutral-bg"
             end
 
-            "#{base_classes} bg-white text-gray-700 border-neutral-border #{hover_classes}"
+            "#{base_classes} bg-ivory text-gray-700 border-brown #{hover_classes}"
         end
       end
     end
